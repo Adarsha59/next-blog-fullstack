@@ -1,11 +1,24 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import Footer from "./components/Footer";
+import BlogWebsite from "./components/NavBar";
 import "./globals.css";
+import { Zilla_Slab, Geist, Geist_Mono, Dancing_Script } from "next/font/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
+const zillaSlab = Zilla_Slab({
+  variable: "--font-zilla-slab",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+const dancescript = Dancing_Script({
+  variable: "--font-dancing-script",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"], // Adjust weights based on font availability
+  style: ["normal"], // Ensure "italic" is removed if unsupported
+  display: "swap",
+});
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -20,9 +33,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${dancescript.variable} antialiased`}
       >
+        <main className={zillaSlab.className}>
+        <BlogWebsite/>
         {children}
+        <Footer/>
+        </main>
       </body>
     </html>
   );
