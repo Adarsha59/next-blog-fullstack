@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next-Blog-Fullstack
 
-## Getting Started
+A full-stack blog application built with **Next.js** (App Router) and **Tailwind CSS**. It includes features like dark/light mode toggle, responsive design, and dynamic blog post pages.
 
-First, run the development server:
+## Table of Contents
+
+- [Installation](#installation)
+- [Features](#features)
+- [Frontend Overview](#frontend-overview)
+- [Technologies Used](#technologies-used)
+- [Project Setup](#project-setup)
+
+## Installation
+
+Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Adarsha59/next-blog-fullstack.git
+cd next-blog-fullstack
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+# Features & Overview
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This application includes the following features:
 
-## Learn More
+- **Navbar**: Fully responsive with links to different sections and a dark/light mode toggle.
+- **Search Bar**: Allows users to search for blog posts.
+- **Categories & Tags**: Display filters for blog posts by category and popular tags.
+- **Featured & Recent Posts**: Showcase featured posts and recently added content.
+- **Newsletter Subscription**: A form to collect user email addresses for updates.
+- **Dynamic Blog Post Pages**: Displays individual blog posts dynamically using the title as a slug (e.g., `/blog/[slug]`).
 
-To learn more about Next.js, take a look at the following resources:
+## Frontend Overview
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The homepage contains:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- A search bar to search for blog posts.
+- Categories to filter blog posts by topics.
+- Featured posts and recent posts sections to highlight key or recently published content.
+- Popular tags to show trending topics.
+- A newsletter subscription form to collect user emails.
 
-## Deploy on Vercel
+The blog post page (`/blog/[slug]`) dynamically loads individual posts based on the title. The design is responsive, styled with Tailwind CSS, and includes animations as well as a dark/light mode toggle.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Technologies Used
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js (App Router)**: For building the app with modern React features.
+- **Tailwind CSS**: For styling the app and ensuring responsive design.
+- **React**: For creating interactive components and managing state.
