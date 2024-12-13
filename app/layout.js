@@ -1,7 +1,10 @@
-import Footer from "./components/Footer";
-import BlogWebsite from "./components/NavBar";
 import "./globals.css";
-import { Zilla_Slab, Geist, Geist_Mono, Dancing_Script } from "next/font/google";
+import {
+  Zilla_Slab,
+  Geist,
+  Geist_Mono,
+  Dancing_Script,
+} from "next/font/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,14 +35,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${dancescript.variable} antialiased`}
-      >
-        <main className={zillaSlab.className}>
-        <BlogWebsite/>
-        {children}
-        <Footer/>
-        </main>
+      <body className={`${dancescript.variable} antialiased`}>
+        <main className={zillaSlab.className}>{children}</main>
       </body>
     </html>
   );
