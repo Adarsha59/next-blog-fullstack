@@ -13,14 +13,15 @@ import {
 const AddPost = () => {
   const editor = useRef(null);
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [content, setContent] = useState("");
+  const [description, setDescription] = useState(""); // Added state for description
   const [categories, setCategories] = useState([]);
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(true);
   const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
 
-  const categoryOptions = [
+  const tagsOptions = [
     "Technology",
     "Travel",
     "Food",
@@ -49,29 +50,31 @@ const AddPost = () => {
     e.preventDefault();
     const validationErrors = {};
     if (!title.trim()) validationErrors.title = "Title is required";
-    if (!description.trim())
-      validationErrors.description = "Description is required";
+    if (!content.trim()) validationErrors.content = "Content is required";
     if (!categories.length)
-      validationErrors.categories = "Select at least one category";
+      validationErrors.categories = "Select at least one tags";
+    if (!description.trim())
+      validationErrors.description = "Description is required"; // Validate description
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
-    console.log({ title, description, categories, image });
+    console.log({ title, description, content, categories, image });
   };
 
   const handleReset = () => {
     setTitle("");
-    setDescription("");
+    setDescription(""); // Reset description
+    setContent("");
     setCategories([]);
     setImage(null);
     setErrors({});
   };
 
   const exportJSON = () => {
-    const data = { title, description, categories, image };
+    const data = { title, description, content, categories, image };
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
     });
@@ -83,19 +86,19 @@ const AddPost = () => {
   };
 
   const handleEditorChange = useCallback((content) => {
-    setDescription(content);
+    setContent(content);
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br p-6">
       <div className="max-w-7xl mx-auto">
-        <nav className="sticky top-0 bg-white/80 backdrop-blur-lg rounded-lg p-4 mb-6 shadow-sm">
+        <nav className="sticky top-0 backdrop-blur-lg rounded-lg p-4 mb-6 shadow-sm">
           <h1 className="text-2xl font-bold text-gray-800">Create New Post</h1>
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Form Section */}
-          <div className="bg-white rounded-xl p-6 shadow-lg">
+          <div className="dark:bg-zinc-950 rounded-xl p-6 shadow-lg">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Title Input */}
               <div>
@@ -104,36 +107,51 @@ const AddPost = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Enter your post title here..."
-                  className={`w-full px-4 py-3 text-xl font-bold border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${
-                    errors.title ? "border-red-500" : "border-gray-200"
-                  }`}
+                  className={`w-full bg-transparent  px-4 py-3 text-xl font-bold border rounded-lg `}
                 />
                 {errors.title && (
                   <p className="text-red-500 text-sm mt-1">{errors.title}</p>
                 )}
               </div>
 
-              {/* Category Selector */}
+              {/* Description Input */}
+              <div>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter a short description of the blog..."
+                  className={`w-full bg-transparent  px-4 py-3 text-lg border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${
+                    errors.description ? "border-red-500" : "border-gray-200"
+                  }`}
+                />
+                {errors.description && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.description}
+                  </p>
+                )}
+              </div>
+
+              {/* Tags Selector */}
               <div>
                 <div className="flex flex-wrap gap-2">
-                  {categoryOptions.map((category) => (
+                  {tagsOptions.map((tags) => (
                     <button
-                      key={category}
+                      key={tags}
                       type="button"
                       onClick={() =>
                         setCategories(
-                          categories.includes(category)
-                            ? categories.filter((c) => c !== category)
-                            : [...categories, category]
+                          categories.includes(tags)
+                            ? categories.filter((c) => c !== tags)
+                            : [...categories, tags]
                         )
                       }
                       className={`px-4 py-2 rounded-full ${
-                        categories.includes(category)
-                          ? "bg-purple-500 text-white"
-                          : "bg-gray-100 text-gray-700"
+                        categories.includes(tags)
+                          ? "bg-purple-500 "
+                          : " text-gray-700"
                       } transition-colors`}
                     >
-                      {category}
+                      {tags}
                     </button>
                   ))}
                 </div>
@@ -144,24 +162,33 @@ const AddPost = () => {
                 )}
               </div>
 
-              {/* Description Input */}
+              {/* Content Input */}
               <div>
                 <JoditEditor
                   ref={editor}
-                  value={description}
+                  value={content}
                   config={{
                     readonly: false,
                     uploader: {
                       insertImageAsBase64URI: true,
                     },
                     toolbarAdaptive: false,
+                    height: "450px",
+                    width: "100%",
+                    enableDragAndDropFileToEditor: true,
+                    removeButtons: ["brush", "file"],
+                    showXPathInStatusbar: false,
+                    style: {
+                      background: "#007C41",
+                    },
                   }}
                   tabIndex={1}
                   onBlur={handleEditorChange} // Use onBlur for immediate state update
                 />
-                {errors.description && (
+
+                {errors?.content && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.description}
+                    {errors.content.message || "Error with the content"}
                   </p>
                 )}
               </div>
@@ -189,7 +216,7 @@ const AddPost = () => {
                     <button
                       type="button"
                       onClick={() => setImage(null)}
-                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                      className="absolute top-2 right-2 p-1 bg-red-500  rounded-full hover:bg-red-600"
                     >
                       <FiX className="w-4 h-4" />
                     </button>
@@ -211,7 +238,7 @@ const AddPost = () => {
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-purple-500 text-white py-3 rounded-lg hover:bg-purple-600 transition-colors"
+                  className="flex-1 bg-purple-500 py-3 rounded-lg hover:bg-purple-600 transition-colors"
                 >
                   Publish Post
                 </button>
@@ -243,48 +270,28 @@ const AddPost = () => {
                 </button>
               </div>
 
+              {/* Show Preview */}
               {preview && (
-                <div className="bg-white rounded-xl p-6 shadow-lg">
-                  {image && (
-                    <img
-                      src={image}
-                      alt="Post preview"
-                      className="w-full h-48 object-cover rounded-lg mb-4"
-                    />
-                  )}
-                  <h1 className="text-2xl font-bold mb-4">
-                    {title || "Your Title Here"}
-                  </h1>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {categories.map((category) => (
-                      <span
-                        key={category}
-                        className="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm"
-                      >
-                        {category}
-                      </span>
-                    ))}
-                  </div>
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                    {title}
+                  </h3>
+                  <p className="text-xl text-gray-700 mb-4">{description}</p>
                   <div
-                    className="prose max-w-none"
-                    dangerouslySetInnerHTML={{ __html: description }}
+                    className="post-content text-gray-800"
+                    dangerouslySetInnerHTML={{ __html: content }}
                   />
+                  {image && (
+                    <div className="mt-4">
+                      <img
+                        src={image}
+                        alt="Post Image"
+                        className="max-h-72 w-full object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
-
-              <div className="mt-6 flex gap-4">
-                <button
-                  onClick={exportJSON}
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                  <FiDownload className="w-5 h-5" />
-                  Export JSON
-                </button>
-                <button className="flex-1 flex items-center justify-center gap-2 bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors">
-                  <FiCode className="w-5 h-5" />
-                  Copy Markdown
-                </button>
-              </div>
             </div>
           </div>
         </div>
