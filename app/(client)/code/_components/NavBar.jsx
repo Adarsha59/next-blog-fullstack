@@ -71,8 +71,8 @@ const BlogWebsite = () => {
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-blue-500">
-                      Archives
+                    <a href="/admin/dashboard" className="hover:text-blue-500">
+                      Admin
                     </a>
                   </li>
                 </ul>

@@ -56,9 +56,10 @@ const BlogSchema = new mongoose.Schema({
       },
     },
   ],
-  isPublished: {
-    type: Boolean,
-    default: false, // Indicates whether the blog is published
+
+  status: {
+    type: String,
+    required: true, //
   },
 });
 

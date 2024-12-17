@@ -7,7 +7,7 @@ export async function POST(req) {
     await connectDB();
 
     // Parse the request body
-    const { title, description, content, author, tags, image } =
+    const { title, description, content, author, tags, status, image } =
       await req.json();
 
     // Validate required fields
@@ -28,6 +28,7 @@ export async function POST(req) {
       content,
       author,
       tags,
+      status, // Use the validated status
       image,
     });
 

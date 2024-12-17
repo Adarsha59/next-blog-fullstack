@@ -2,12 +2,13 @@ import connectDB from "@/app/lib/connectDB";
 import Blog from "@/app/models/Crud";
 import { NextResponse } from "next/server";
 
-export async function DELETE(req) {
+export async function DELETE(req, { params }) {
   try {
     // Connect to the database
     await connectDB();
-    const { id } = await req.json();
-    // Extract ID from query parameters
+
+    // Extract ID from the URL parameters
+    const { id } = params;
 
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });

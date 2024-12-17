@@ -1,8 +1,25 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
-
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { format } from "date-fns";
 const BlogPostsTable = () => {
+  const router = useRouter();
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("/api/blog/read");
+        const posts = response.data.data;
+        setPosts(posts);
+        // console.log("object returned", response.data.data);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+    fetchPosts();
+  }, []);
+
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -23,114 +40,39 @@ const BlogPostsTable = () => {
       createdAt: "2024-01-13",
     },
   ]);
+  const gopost = () => {
+    router.push("/admin/addpost");
+  };
+  const goedit = (id) => {
+    router.push(`/admin/addpost?id=${id}`);
+  };
+  const handleDelete = async (id) => {
+    try {
+      // Send a DELETE request to your API with the ID in the URL
+      const response = await axios.delete(`/api/blog/${id}/delete`);
+      console.log(response.data.message); // Success message from the backend
 
-  const [showModal, setShowModal] = useState(false);
+      // Optionally, refresh the posts or handle success
+      setPosts(posts.filter((post) => post._id !== id)); // Remove the deleted post from the local state
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      // Optionally show an alert or toast
+    }
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    status: "Draft",
-  });
-
   const postsPerPage = 5;
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
   const totalPages = Math.ceil(posts.length / postsPerPage);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newPost = {
-      id: posts.length + 1,
-      ...formData,
-      createdAt: new Date().toISOString().split("T")[0],
-    };
-    setPosts([...posts, newPost]);
-    setShowModal(false);
-    setFormData({ title: "", content: "", status: "Draft" });
-  };
-
-  const handleDelete = (id) => {
-    setPosts(posts.filter((post) => post.id !== id));
-  };
-
-  const Modal = () => (
-    <div className="fixed inset-0 z-50 flex items-center justify-center  bg-opacity-50">
-      <div className="w-full max-w-md rounded-lg  p-6 shadow-xl">
-        <h2 className="mb-4 text-2xl font-bold">Add New Post</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="mb-2 block font-bold" htmlFor="title">
-              Title
-            </label>
-            <input
-              type="text"
-              id="title"
-              className="w-full rounded border p-2"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="mb-2 block font-bold" htmlFor="content">
-              Content
-            </label>
-            <textarea
-              id="content"
-              className="w-full rounded border p-2"
-              rows="4"
-              value={formData.content}
-              onChange={(e) =>
-                setFormData({ ...formData, content: e.target.value })
-              }
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="mb-2 block font-bold" htmlFor="status">
-              Status
-            </label>
-            <select
-              id="status"
-              className="w-full rounded border p-2"
-              value={formData.status}
-              onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value })
-              }
-            >
-              <option value="Draft">Draft</option>
-              <option value="Published">Published</option>
-            </select>
-          </div>
-          <div className="flex justify-end space-x-2">
-            <button
-              type="button"
-              className="rounded bg-gray-300 px-4 py-2 font-bold text-gray-700 hover:bg-gray-400"
-              onClick={() => setShowModal(false)}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold">Blog Posts</h1>
         <button
-          onClick={() => setShowModal(true)}
+          onClick={gopost}
           className="flex items-center rounded-full bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
         >
           <FiPlus className="mr-2" /> Add New Post
@@ -139,7 +81,7 @@ const BlogPostsTable = () => {
 
       <div className="overflow-x-auto rounded-lg shadow">
         <table className="min-w-full table-auto">
-          <thead className="border  ">
+          <thead className="border">
             <tr>
               <th className="px-6 py-3 text-left font-semibold text-gray-600">
                 Title
@@ -155,9 +97,9 @@ const BlogPostsTable = () => {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 ">
+          <tbody className="divide-y divide-gray-200">
             {currentPosts.map((post) => (
-              <tr key={post.id} className=" hover:bg-cyan-800">
+              <tr key={post.id} className="hover:bg-cyan-800">
                 <td className="px-6 py-4">{post.title}</td>
                 <td className="px-6 py-4">
                   <span
@@ -170,14 +112,21 @@ const BlogPostsTable = () => {
                     {post.status}
                   </span>
                 </td>
-                <td className="px-6 py-4">{post.createdAt}</td>
+                <td className="px-6 py-4">
+                  {post.createdAt
+                    ? format(new Date(post.createdAt), "yyyy-MM-dd")
+                    : "N/A"}
+                </td>
                 <td className="px-6 py-4">
                   <div className="flex space-x-2">
-                    <button className="rounded p-1 text-blue-600 hover:bg-blue-100">
+                    <button
+                      onClick={() => goedit(post._id)}
+                      className="rounded p-1 text-blue-600 hover:bg-blue-100"
+                    >
                       <FiEdit2 size={18} />
                     </button>
                     <button
-                      onClick={() => handleDelete(post.id)}
+                      onClick={() => handleDelete(post._id)}
                       className="rounded p-1 text-red-600 hover:bg-red-100"
                     >
                       <FiTrash2 size={18} />
@@ -209,8 +158,6 @@ const BlogPostsTable = () => {
           Next
         </button>
       </div>
-
-      {showModal && <Modal />}
     </div>
   );
 };

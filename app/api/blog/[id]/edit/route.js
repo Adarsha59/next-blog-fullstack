@@ -2,11 +2,17 @@ import connectDB from "@/app/lib/connectDB";
 import Blog from "@/app/models/Crud";
 import { NextResponse } from "next/server";
 
-export async function PUT(req) {
+export async function PUT(req, { params }) {
   try {
     // Connect to the database
     await connectDB();
-    const { id, title, description, content, tags, image } = await req.json();
+
+    // Extract the 'id' from the URL parameters
+    const { id } = params; // Extract id from the URL
+
+    // Get the rest of the data from the request body
+    const { title, description, content, author, tags, status, image } =
+      await req.json();
 
     if (!id) {
       return NextResponse.json({ message: "ID is required" }, { status: 400 });
@@ -20,6 +26,8 @@ export async function PUT(req) {
         description,
         content,
         tags,
+        author,
+        status,
         image,
         updatedAt: Date.now(),
       },

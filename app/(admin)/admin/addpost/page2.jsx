@@ -1,99 +1,128 @@
 "use client";
-import JoditEditor from "jodit-react";
-import React, { useState, useRef, useCallback } from "react";
-import {
-  FiUpload,
-  FiX,
-  FiEye,
-  FiEyeOff,
-  FiCode,
-  FiDownload,
-} from "react-icons/fi";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import axios from "axios";
+import { FiUpload, FiX, FiEye, FiEyeOff } from "react-icons/fi";
 
 const AddPost = () => {
-  const editor = useRef(null);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [description, setDescription] = useState(""); // Added state for description
-  const [categories, setCategories] = useState([]);
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(true);
+  const searchParams = useSearchParams();
+  const postId = searchParams.get("id"); // Fetch postId from query params
+  console.log("Search", postId);
+
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    content: "",
+    author: "",
+    tags: "",
+    image: "",
+    status: "", // Default to "draft"
+  });
+
+  // Fetch post data if editing
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (postId) {
+        try {
+          const response = await axios.post(`/api/blog/oneread`, {
+            id: postId,
+          });
+
+          const post = response.data.data; // Assuming API returns post data under 'data'
+          setFormData({
+            title: post.title || "",
+            description: post.description || "",
+            content: post.content || "",
+            author: post.author || "",
+            tags: post.tags ? post.tags.join(", ") : "", // Convert tags array to string
+            image: post.image || "",
+            status: post.status || "draft", // Set status from fetched post (default to "draft")
+          });
+          console.log("Fetched Post Data:", post);
+        } catch (error) {
+          console.error("Error fetching post:", error);
+        }
+      }
+    };
+    fetchPost();
+  }, [postId]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const dataToSubmit = {
+      ...formData,
+      tags: formData.tags.split(",").map((tag) => tag.trim()), // Convert tags to array
+    };
+
+    try {
+      if (postId) {
+        // Update existing post
+        await axios.put(`/api/blog/${postId}/edit`, dataToSubmit);
+        console.log("Post Updated:", dataToSubmit);
+      } else {
+        // Create new post
+        await axios.post("/api/blog/create", dataToSubmit);
+        console.log("Post Created:", dataToSubmit);
+      }
+      // Reset form after successful submission
+      setFormData({
+        title: "",
+        description: "",
+        content: "",
+        author: "",
+        tags: "",
+        image: "",
+        status: "", // Reset status to "draft"
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
   const [errors, setErrors] = useState({});
-  const fileInputRef = useRef(null);
+  const [preview, setPreview] = useState(true);
 
-  const tagsOptions = [
-    "Technology",
-    "Travel",
-    "Food",
-    "Lifestyle",
-    "Fashion",
-    "Health",
-  ];
-
-  const handleImageDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    handleImageUpload(file);
-  };
-
-  const handleImageUpload = (file) => {
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = {};
-    if (!title.trim()) validationErrors.title = "Title is required";
-    if (!content.trim()) validationErrors.content = "Content is required";
-    if (!categories.length)
-      validationErrors.categories = "Select at least one tags";
-    if (!description.trim())
-      validationErrors.description = "Description is required"; // Validate description
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    console.log({ title, description, content, categories, image });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleReset = () => {
-    setTitle("");
-    setDescription(""); // Reset description
-    setContent("");
-    setCategories([]);
-    setImage(null);
+    setFormData({
+      title: "",
+      description: "",
+      content: "",
+      author: "",
+      tags: [],
+      image: "",
+      status: "draft",
+    });
     setErrors({});
   };
-
-  const exportJSON = () => {
-    const data = { title, description, content, categories, image };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "post-data.json";
-    a.click();
-  };
-
-  const handleEditorChange = useCallback((content) => {
-    setContent(content);
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br p-6">
       <div className="max-w-7xl mx-auto">
         <nav className="sticky top-0 backdrop-blur-lg rounded-lg p-4 mb-6 shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-800">Create New Post</h1>
+          {!postId ? (
+            <h1 className="text-2xl font-bold text-gray-800">
+              Create New Post
+            </h1>
+          ) : (
+            <h1 className="text-2xl font-bold text-gray-800">Edit Post</h1>
+          )}
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-6">
@@ -102,12 +131,20 @@ const AddPost = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Title Input */}
               <div>
+                <label
+                  htmlFor="title"
+                  className="text-lg font-semibold text-gray-700"
+                >
+                  Title
+                </label>
                 <input
                   type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
                   placeholder="Enter your post title here..."
-                  className={`w-full bg-transparent  px-4 py-3 text-xl font-bold border rounded-lg `}
+                  className={`w-full bg-transparent px-4 py-3 text-xl font-bold border rounded-lg`}
                 />
                 {errors.title && (
                   <p className="text-red-500 text-sm mt-1">{errors.title}</p>
@@ -116,11 +153,19 @@ const AddPost = () => {
 
               {/* Description Input */}
               <div>
+                <label
+                  htmlFor="description"
+                  className="text-lg font-semibold text-gray-700"
+                >
+                  Description
+                </label>
                 <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
                   placeholder="Enter a short description of the blog..."
-                  className={`w-full bg-transparent  px-4 py-3 text-lg border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${
+                  className={`w-full bg-transparent px-4 py-3 text-lg border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${
                     errors.description ? "border-red-500" : "border-gray-200"
                   }`}
                 />
@@ -131,107 +176,118 @@ const AddPost = () => {
                 )}
               </div>
 
+              {/* Author Input */}
+              <div>
+                <label
+                  htmlFor="author"
+                  className="text-lg font-semibold text-gray-700"
+                >
+                  Author
+                </label>
+                <input
+                  type="text"
+                  id="author"
+                  name="author"
+                  value={formData.author}
+                  onChange={handleInputChange}
+                  placeholder="Enter the author's name..."
+                  className={`w-full bg-transparent px-4 py-3 text-xl font-bold border rounded-lg`}
+                />
+                {errors.author && (
+                  <p className="text-red-500 text-sm mt-1">{errors.author}</p>
+                )}
+              </div>
+
               {/* Tags Selector */}
               <div>
-                <div className="flex flex-wrap gap-2">
-                  {tagsOptions.map((tags) => (
-                    <button
-                      key={tags}
-                      type="button"
-                      onClick={() =>
-                        setCategories(
-                          categories.includes(tags)
-                            ? categories.filter((c) => c !== tags)
-                            : [...categories, tags]
-                        )
-                      }
-                      className={`px-4 py-2 rounded-full ${
-                        categories.includes(tags)
-                          ? "bg-purple-500 "
-                          : " text-gray-700"
-                      } transition-colors`}
-                    >
-                      {tags}
-                    </button>
-                  ))}
-                </div>
-                {errors.categories && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.categories}
-                  </p>
+                <label
+                  htmlFor="tags"
+                  className="text-lg font-semibold text-gray-700"
+                >
+                  Tags
+                </label>
+                <input
+                  type="text"
+                  id="tags"
+                  name="tags"
+                  value={formData.tags}
+                  onChange={handleChange}
+                  placeholder="Enter tags, separated by commas"
+                  className={`w-full bg-transparent px-4 py-3 text-lg border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${
+                    errors.tags ? "border-red-500" : "border-gray-200"
+                  }`}
+                />
+                {errors.tags && (
+                  <p className="text-red-500 text-sm mt-1">{errors.tags}</p>
                 )}
               </div>
 
               {/* Content Input */}
               <div>
-                <JoditEditor
-                  ref={editor}
-                  value={content}
-                  config={{
-                    readonly: false,
-                    uploader: {
-                      insertImageAsBase64URI: true,
-                    },
-                    toolbarAdaptive: false,
-                    height: "450px",
-                    width: "100%",
-                    enableDragAndDropFileToEditor: true,
-                    removeButtons: ["brush", "file"],
-                    showXPathInStatusbar: false,
-                    style: {
-                      background: "#007C41",
-                    },
-                  }}
-                  tabIndex={1}
-                  onBlur={handleEditorChange} // Use onBlur for immediate state update
+                <label
+                  htmlFor="content"
+                  className="text-lg font-semibold text-gray-700"
+                >
+                  Content
+                </label>
+                <textarea
+                  id="content"
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  placeholder="Enter the full content..."
+                  className={`w-full bg-transparent px-4 py-3 text-lg border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${
+                    errors.content ? "border-red-500" : "border-gray-200"
+                  }`}
                 />
-
-                {errors?.content && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.content.message || "Error with the content"}
-                  </p>
+                {errors.content && (
+                  <p className="text-red-500 text-sm mt-1">{errors.content}</p>
                 )}
               </div>
 
-              {/* Image Upload */}
-              <div
-                onDrop={handleImageDrop}
-                onDragOver={(e) => e.preventDefault()}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center"
-              >
+              {/* Image Link Input */}
+              <div>
+                <label
+                  htmlFor="image"
+                  className="text-lg font-semibold text-gray-700"
+                >
+                  Image URL
+                </label>
                 <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={(e) => handleImageUpload(e.target.files[0])}
-                  accept="image/*"
-                  className="hidden"
+                  type="text"
+                  id="image"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleInputChange}
+                  placeholder="Enter image URL..."
+                  className="w-full bg-transparent px-4 py-3 text-lg border rounded-lg"
                 />
-                {image ? (
-                  <div className="relative">
-                    <img
-                      src={image}
-                      alt="Preview"
-                      className="max-h-48 mx-auto rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setImage(null)}
-                      className="absolute top-2 right-2 p-1 bg-red-500  rounded-full hover:bg-red-600"
-                    >
-                      <FiX className="w-4 h-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="cursor-pointer"
-                  >
-                    <FiUpload className="w-8 h-8 mx-auto text-gray-400" />
-                    <p className="mt-2 text-gray-500">
-                      Drag & drop an image or click to browse
-                    </p>
-                  </div>
-                )}
+              </div>
+
+              {/* Status Radio Buttons */}
+              <div className="flex gap-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="draft"
+                    checked={formData.status === "draft"}
+                    onChange={handleInputChange}
+                    className="mr-2"
+                  />
+                  Draft
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="published"
+                    checked={formData.status === "published"}
+                    onChange={handleInputChange}
+                    className="mr-2"
+                  />
+                  Published
+                </label>
               </div>
 
               {/* Buttons */}
@@ -254,44 +310,17 @@ const AddPost = () => {
           </div>
 
           {/* Preview Section */}
-          <div className="lg:block">
-            <div className="sticky top-24">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">Preview</h2>
-                <button
-                  onClick={() => setPreview(!preview)}
-                  className="p-2 hover:bg-gray-100 rounded-full"
-                >
-                  {preview ? (
-                    <FiEyeOff className="w-5 h-5" />
-                  ) : (
-                    <FiEye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-
-              {/* Show Preview */}
-              {preview && (
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                    {title}
-                  </h3>
-                  <p className="text-xl text-gray-700 mb-4">{description}</p>
-                  <div
-                    className="post-content text-gray-800"
-                    dangerouslySetInnerHTML={{ __html: content }}
-                  />
-                  {image && (
-                    <div className="mt-4">
-                      <img
-                        src={image}
-                        alt="Post Image"
-                        className="max-h-72 w-full object-cover rounded-lg"
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
+          <div className="dark:bg-zinc-950 rounded-xl p-6 shadow-lg">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Post Preview
+            </h2>
+            <div>
+              <h3 className="text-xl font-bold">
+                {formData.title || "Untitled Post"}
+              </h3>
+              <p className="text-lg mt-2">
+                {formData.description || "No description provided"}
+              </p>
             </div>
           </div>
         </div>

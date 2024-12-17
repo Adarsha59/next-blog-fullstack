@@ -1,53 +1,43 @@
-"use client"
+"use client";
+import axios from "axios";
+import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import { FaFacebook, FaTwitter, FaLinkedin, FaClock, FaUser, FaTags, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaTwitter,
+  FaLinkedin,
+  FaClock,
+  FaUser,
+  FaTags,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 
-const BlogPost = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  const post = {
-    title: "Understanding Modern Web Development",
-    category: "Technology",
-    author: {
-      name: "John Doe",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-      bio: "Senior Web Developer with 10+ years of experience in building scalable applications."
-    },
-    date: "March 15, 2024",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    mainImage: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    tags: ["Web Development", "React", "JavaScript", "Frontend"],
-    comments: [
-      {
-        id: 1,
-        author: "Jane Smith",
-        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-        content: "Great article! Very informative.",
-        date: "March 16, 2024"
-      }
-    ],
-    relatedPosts: [
-      {
-        id: 1,
-        title: "Getting Started with React Hooks",
-        image: "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4"
-      },
-      {
-        id: 2,
-        title: "Advanced TypeScript Patterns",
-        image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c"
-      }
-    ]
-  };
+const BlogPost = ({ params }) => {
+  const { id } = params;
+  console.log("Blog ID:", id);
+  const [post, setPost] = useState(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100);
+    const fetchPost = async () => {
+      try {
+        const response = await axios.post("/api/blog/oneread", { id });
+        const fetchedPost = response.data.data;
+        setPost(fetchedPost);
+        console.log("Fetched Blog Post:", fetchedPost);
+      } catch (error) {
+        console.error("Error fetching blog post:", error);
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    if (id) {
+      fetchPost();
+    }
+  }, [id]);
+
+  if (!post) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -55,7 +45,9 @@ const BlogPost = () => {
       <header className="max-w-4xl mx-auto px-4 py-8">
         <div className="space-y-4">
           <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
-            <span className="bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100 px-3 py-1 rounded-full">{post.category}</span>
+            <span className="bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100 px-3 py-1 rounded-full">
+              {post.tags.length > 0 ? post.tags[0] : "No Category"}
+            </span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white transition-all duration-300">
             {post.title}
@@ -63,14 +55,16 @@ const BlogPost = () => {
           <div className="flex items-center space-x-4">
             <img
               src={post.author.image}
-              alt={post.author.name}
+              alt={post.author}
               className="w-12 h-12 rounded-full"
             />
             <div>
-              <p className="font-medium text-gray-900 dark:text-white">{post.author.name}</p>
+              <p className="font-medium text-gray-900 dark:text-white">
+                {post.author}
+              </p>
               <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
                 <FaClock className="mr-2" />
-                {post.date}
+                {new Date(post.createdAt).toLocaleDateString()}
               </div>
             </div>
           </div>
@@ -91,25 +85,25 @@ const BlogPost = () => {
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
         <img
-          src={post.mainImage}
+          src={post.image}
           alt="Blog Cover"
           className="w-full h-96 object-cover rounded-xl mb-8 transition-transform duration-300 hover:scale-[1.02]"
         />
 
-        <article className="prose lg:prose-xl max-w-none text-gray-900 dark:text-white">
+        {/* <article className="prose lg:prose-xl max-w-none text-gray-900 dark:text-white">
           <p>{post.content}</p>
-        </article>
-
-        {/* Callout Box */}
-        <div className="my-8 p-6 bg-white/80 backdrop-blur-lg rounded-xl shadow-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-          <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Important Note</h3>
-          <p className="text-gray-700 dark:text-gray-300">This is a special callout box for important information.</p>
-        </div>
+        </article> */}
+        <article
+          className="prose lg:prose-xl max-w-none text-gray-900 dark:text-white"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        ></article>
 
         {/* Comments Section */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Comments ({post.comments.length})</h2>
-          
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+            Comments ({post.comments.length})
+          </h2>
+
           {/* Comment Form */}
           <form className="mb-8 space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -135,9 +129,12 @@ const BlogPost = () => {
           </form>
 
           {/* Comments List */}
-          <div className="space-y-6">   
+          <div className="space-y-6">
             {post.comments.map((comment) => (
-              <div key={comment.id} className="bg-white p-6 rounded-xl shadow-sm dark:bg-gray-800 dark:text-white">
+              <div
+                key={comment.id}
+                className="bg-white p-6 rounded-xl shadow-sm dark:bg-gray-800 dark:text-white"
+              >
                 <div className="flex items-center space-x-4 mb-4">
                   <img
                     src={comment.avatar}
@@ -146,24 +143,26 @@ const BlogPost = () => {
                   />
                   <div>
                     <p className="font-medium">{comment.author}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{comment.date}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {comment.date}
+                    </p>
                   </div>
                 </div>
-                <p className="text-gray-700 dark:text-gray-300">{comment.content}</p>
+                <p className="text-gray-700 dark:text-gray-300">
+                  {comment.content}
+                </p>
               </div>
             ))}
           </div>
         </section>
-
         {/* Related Posts */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Related Posts</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+            Related Posts
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {post.relatedPosts.map((relatedPost) => (
-              <div
-                key={relatedPost.id}
-                className="group cursor-pointer"
-              >
+            {post.comments.map((relatedPost) => (
+              <div key={relatedPost.id} className="group cursor-pointer">
                 <div className="relative overflow-hidden rounded-xl">
                   <img
                     src={relatedPost.image}
@@ -181,20 +180,25 @@ const BlogPost = () => {
 
         {/* Author Bio */}
         <section className="mt-12 bg-white p-6 rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700">
-          <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">About the Author</h3>
+          <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+            About the Author
+          </h3>
           <div className="flex items-center space-x-4">
             <img
-              src={post.author.image}
-              alt={post.author.name}
+              src={post.image}
+              alt={post.author}
               className="w-16 h-16 rounded-full"
             />
             <div>
-              <p className="font-medium text-gray-900 dark:text-white">{post.author.name}</p>
-              <p className="text-gray-700 dark:text-gray-300">{post.author.bio}</p>
+              <p className="font-medium text-gray-900 dark:text-white">
+                {post.author}
+              </p>
+              <p className="text-gray-700 dark:text-gray-300">
+                {post.author.bio}
+              </p>
             </div>
           </div>
         </section>
-
         {/* Pagination */}
         <div className="flex justify-between items-center mt-12">
           <button className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500">
