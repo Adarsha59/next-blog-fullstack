@@ -93,6 +93,7 @@ const BlogPost = ({ params }) => {
         {/* <article className="prose lg:prose-xl max-w-none text-gray-900 dark:text-white">
           <p>{post.content}</p>
         </article> */}
+
         <article
           className="prose lg:prose-xl max-w-none text-gray-900 dark:text-white"
           dangerouslySetInnerHTML={{ __html: post.content }}

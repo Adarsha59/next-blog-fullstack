@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import JoditEditor from "jodit-react";
@@ -8,8 +9,6 @@ const AddPost = () => {
   const editor = useRef(null);
   const searchParams = useSearchParams();
   const postId = searchParams.get("id"); // Fetch postId from query params
-  console.log("Search", postId);
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -20,12 +19,14 @@ const AddPost = () => {
     status: "draft", // Default to "draft"
   });
 
-  // Fetch post data if editing
+  const [errors, setErrors] = useState({});
+  const [preview, setPreview] = useState(false);
+
   useEffect(() => {
     const fetchPost = async () => {
       if (postId) {
         try {
-          const response = await axios.post(`/api/blog/oneread`, {
+          const response = await axios.post("/api/blog/oneread", {
             id: postId,
           });
 
@@ -37,9 +38,8 @@ const AddPost = () => {
             author: post.author || "",
             tags: post.tags ? post.tags.join(", ") : "", // Convert tags array to string
             image: post.image || "",
-            status: post.status || "draft", // Set status from fetched post (default to "draft")
+            status: post.status || "draft", // Default to draft if not provided
           });
-          console.log("Fetched Post Data:", post);
         } catch (error) {
           console.error("Error fetching post:", error);
         }
@@ -48,11 +48,77 @@ const AddPost = () => {
     fetchPost();
   }, [postId]);
 
+  const config = useMemo(
+    () => ({
+      readonly: false, // Editor is editable
+      placeholder: "Start typing...",
+      height: "450px",
+      width: "100%",
+      enableDragAndDropFileToEditor: false,
+      // buttons: [
+      //   "source",
+      //   "|",
+      //   "bold",
+      //   "italic",
+      //   "underline",
+      //   "|",
+      //   "ul",
+      //   "ol",
+      //   "|",
+      //   "font",
+      //   "fontsize",
+      //   "brush",
+      //   "paragraph",
+      //   "|",
+      //   "image",
+      //   "table",
+      //   "link",
+      //   "|",
+      //   "left",
+      //   "center",
+      //   "right",
+      //   "justify",
+      //   "|",
+      //   "undo",
+      //   "redo",
+      //   "|",
+      //   "hr",
+      //   "eraser",
+      //   "fullsize",
+      // ],
+      // uploader: { insertImageAsBase64URI: true },
+      // removeButtons: ["brush", "file"],
+      showXPathInStatusbar: true,
+      showCharsCounter: true,
+      showWordsCounter: true,
+      toolbarAdaptive: true,
+      toolbarSticky: true,
+      style: {
+        background: "#B17261", // Gradient background
+        color: "black",
+        backdropFilter: "blur(10px)", // Slightly brighter text color
+        borderRadius: "8px", // Smooth rounded corners
+        padding: "10px 15px", // Comfortable padding
+        transition: "all 0.3s ease", // Smooth hover transitions
+      },
+
+      // theme: "dark",
+    }),
+    []
+  );
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleEditorChange = (content) => {
+    setFormData((prev) => ({
+      ...prev,
+      content,
     }));
   };
 
@@ -66,38 +132,16 @@ const AddPost = () => {
 
     try {
       if (postId) {
-        // Update existing post
-        await axios.put(`/api/blog/${postId}/edit`, dataToSubmit);
+        await axios.put(`/api/blog/${postId}/edit`, dataToSubmit); // Update existing post
         console.log("Post Updated:", dataToSubmit);
       } else {
-        // Create new post
-        await axios.post("/api/blog/create", dataToSubmit);
+        await axios.post("/api/blog/create", dataToSubmit); // Create new post
         console.log("Post Created:", dataToSubmit);
       }
-      // Reset form after successful submission
-      setFormData({
-        title: "",
-        description: "",
-        content: "",
-        author: "",
-        tags: "",
-        image: "",
-        status: "draft", // Reset status to "draft"
-      });
+      handleReset();
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-  };
-
-  const [errors, setErrors] = useState({});
-  const [preview, setPreview] = useState(true);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
   };
 
   const handleReset = () => {
@@ -108,11 +152,10 @@ const AddPost = () => {
       author: "",
       tags: "",
       image: "",
-      status: "draft", // Reset status to "draft"
+      status: "draft",
     });
     setErrors({});
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br p-6">
       <div className="max-w-7xl mx-auto">
@@ -143,9 +186,9 @@ const AddPost = () => {
                   id="title"
                   name="title"
                   value={formData.title}
-                  onChange={handleInputChange}
+                  onChange={handleChange}
                   placeholder="Enter your post title here..."
-                  className={`w-full bg-transparent px-4 py-3 text-xl font-bold border rounded-lg`}
+                  className="w-full bg-transparent px-4 py-3 text-xl font-bold border rounded-lg"
                 />
                 {errors.title && (
                   <p className="text-red-500 text-sm mt-1">{errors.title}</p>
@@ -164,11 +207,9 @@ const AddPost = () => {
                   id="description"
                   name="description"
                   value={formData.description}
-                  onChange={handleInputChange}
-                  placeholder="Enter a short description of the blog..."
-                  className={`w-full bg-transparent px-4 py-3 text-lg border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${
-                    errors.description ? "border-red-500" : "border-gray-200"
-                  }`}
+                  onChange={handleChange}
+                  placeholder="Enter a short description..."
+                  className="w-full bg-transparent px-4 py-3 text-lg border rounded-lg"
                 />
                 {errors.description && (
                   <p className="text-red-500 text-sm mt-1">
@@ -190,7 +231,7 @@ const AddPost = () => {
                   id="author"
                   name="author"
                   value={formData.author}
-                  onChange={handleInputChange}
+                  onChange={handleChange}
                   placeholder="Enter the author's name..."
                   className={`w-full bg-transparent px-4 py-3 text-xl font-bold border rounded-lg`}
                 />
@@ -232,14 +273,10 @@ const AddPost = () => {
                   Content
                 </label>
                 <JoditEditor
-                  id="content"
                   ref={editor}
-                  name="content"
                   value={formData.content}
-                  onChange={(newContent) =>
-                    setFormData((prev) => ({ ...prev, content: newContent }))
-                  }
-                  placeholder="Enter the full content..."
+                  config={config}
+                  onBlur={handleEditorChange}
                 />
                 {errors.content && (
                   <p className="text-red-500 text-sm mt-1">{errors.content}</p>

@@ -13,6 +13,7 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import ToggleTheme from "./ToggleTheme";
+import Link from "next/link";
 
 const BlogWebsite = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,8 +28,10 @@ const BlogWebsite = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col items-center">
             <h1 className="text-3xl font-bold mb-4">Blog </h1>
-            <Image src="/images/logo.svg" width={200} height={200} />
-            <div className="pt-10"> </div>
+            <Link href="/code">
+              <Image src="/images/logo.svg" width={200} height={200} />
+              <div className="pt-10"> </div>
+            </Link>
 
             <div className="flex space-x-4 mb-9">
               <FaFacebook className="text-2xl hover:text-blue-600 cursor-pointer" />
@@ -51,7 +54,7 @@ const BlogWebsite = () => {
               <div className={`${isMenuOpen ? "block" : "hidden"} md:block`}>
                 <ul className="flex flex-col md:flex-row md:space-x-6 space-y-2 md:space-y-0">
                   <li>
-                    <a href="#" className="hover:text-blue-500">
+                    <a href="/code" className="hover:text-blue-500">
                       Home
                     </a>
                   </li>

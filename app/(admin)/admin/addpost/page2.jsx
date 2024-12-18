@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
-import { FiUpload, FiX, FiEye, FiEyeOff } from "react-icons/fi";
+import JoditEditor from "jodit-react";
 
 const AddPost = () => {
+  const editor = useRef(null);
   const searchParams = useSearchParams();
   const postId = searchParams.get("id"); // Fetch postId from query params
   console.log("Search", postId);
@@ -16,7 +17,7 @@ const AddPost = () => {
     author: "",
     tags: "",
     image: "",
-    status: "", // Default to "draft"
+    status: "draft", // Default to "draft"
   });
 
   // Fetch post data if editing
@@ -81,7 +82,7 @@ const AddPost = () => {
         author: "",
         tags: "",
         image: "",
-        status: "", // Reset status to "draft"
+        status: "draft", // Reset status to "draft"
       });
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -105,9 +106,9 @@ const AddPost = () => {
       description: "",
       content: "",
       author: "",
-      tags: [],
+      tags: "",
       image: "",
-      status: "draft",
+      status: "draft", // Reset status to "draft"
     });
     setErrors({});
   };
@@ -230,15 +231,15 @@ const AddPost = () => {
                 >
                   Content
                 </label>
-                <textarea
+                <JoditEditor
                   id="content"
+                  ref={editor}
                   name="content"
                   value={formData.content}
-                  onChange={handleInputChange}
+                  onChange={(newContent) =>
+                    setFormData((prev) => ({ ...prev, content: newContent }))
+                  }
                   placeholder="Enter the full content..."
-                  className={`w-full bg-transparent px-4 py-3 text-lg border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${
-                    errors.content ? "border-red-500" : "border-gray-200"
-                  }`}
                 />
                 {errors.content && (
                   <p className="text-red-500 text-sm mt-1">{errors.content}</p>
@@ -258,70 +259,49 @@ const AddPost = () => {
                   id="image"
                   name="image"
                   value={formData.image}
-                  onChange={handleInputChange}
-                  placeholder="Enter image URL..."
-                  className="w-full bg-transparent px-4 py-3 text-lg border rounded-lg"
+                  onChange={handleChange}
+                  placeholder="Image URL (optional)"
+                  className={`w-full bg-transparent px-4 py-3 text-lg font-bold border rounded-lg`}
                 />
               </div>
 
-              {/* Status Radio Buttons */}
-              <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="draft"
-                    checked={formData.status === "draft"}
-                    onChange={handleInputChange}
-                    className="mr-2"
-                  />
-                  Draft
+              {/* Status Dropdown */}
+              <div>
+                <label
+                  htmlFor="status"
+                  className="text-lg font-semibold text-gray-700"
+                >
+                  Status
                 </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="published"
-                    checked={formData.status === "published"}
-                    onChange={handleInputChange}
-                    className="mr-2"
-                  />
-                  Published
-                </label>
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full bg-transparent px-4 py-3 text-lg font-bold border rounded-lg"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                </select>
               </div>
 
-              {/* Buttons */}
+              {/* Submit and Reset Buttons */}
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-purple-500 py-3 rounded-lg hover:bg-purple-600 transition-colors"
+                  className="px-6 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition duration-200"
                 >
-                  Publish Post
+                  {postId ? "Update Post" : "Create Post"}
                 </button>
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="px-6 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition duration-200"
                 >
                   Reset
                 </button>
               </div>
             </form>
-          </div>
-
-          {/* Preview Section */}
-          <div className="dark:bg-zinc-950 rounded-xl p-6 shadow-lg">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              Post Preview
-            </h2>
-            <div>
-              <h3 className="text-xl font-bold">
-                {formData.title || "Untitled Post"}
-              </h3>
-              <p className="text-lg mt-2">
-                {formData.description || "No description provided"}
-              </p>
-            </div>
           </div>
         </div>
       </div>
