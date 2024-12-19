@@ -32,7 +32,7 @@ const BlogHomepage = () => {
   return (
     <div className="min-h-screen    overflow-x-hidden">
       {/* Categories */}
-      <Categories />
+      <Categories posts={posts} />
 
       {/* Featured Posts */}
       <FeaturedPosts posts={posts} />
