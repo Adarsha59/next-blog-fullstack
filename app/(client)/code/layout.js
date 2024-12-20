@@ -1,5 +1,6 @@
 "use client";
 
+import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "./_components/Footer";
 import BlogHomepage from "./_components/Main";
 import BlogWebsite from "./_components/NavBar";

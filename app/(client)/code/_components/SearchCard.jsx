@@ -1,9 +1,9 @@
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { FiSearch, FiClock, FiMessageCircle } from "react-icons/fi";
+import { FiSearchCard, FiClock, FiMessageCircle } from "react-icons/fi";
 import { FaHeart, FaClock } from "react-icons/fa";
 
-const FeaturedPosts = ({ posts }) => {
+const SearchCard = ({ posts }) => {
   const router = useRouter();
   // Function to calculate read time based on the content length
   const calculateReadTime = (content) => {
@@ -29,7 +29,7 @@ const FeaturedPosts = ({ posts }) => {
   return (
     <section className="max-w-6xl mx-auto px-4 py-12">
       <h2 className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-        Featured Posts
+        SearchCard Posts
       </h2>
       <div className="flex overflow-x-auto gap-6 pb-4 snap-x">
         {posts.length > 0 ? (
@@ -75,4 +75,4 @@ const FeaturedPosts = ({ posts }) => {
   );
 };
 
-export default FeaturedPosts;
+export default SearchCard;

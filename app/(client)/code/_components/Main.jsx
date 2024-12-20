@@ -13,15 +13,38 @@ import Categories from "./Categories";
 import FeaturedPosts from "./FeaturedPosts";
 import RecentPosts from "./RecentPosts";
 import axios from "axios";
+
 const BlogHomepage = () => {
   const [posts, setPosts] = useState([]);
+  const [topLikedPosts, setTopLikedPosts] = useState([]);
+  const [recentPosts, setRecentPosts] = useState([]);
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get("/api/blog/read");
-        const posts = response.data.data;
+        const published = response.data.data;
+        const posts = published.filter((post) => post.status === "published"); // Filter posts with 'published' status
+        // Sort posts by likes in descending order and get the top 4
+        const sortedPostsByLikes = [...posts].sort((a, b) => b.likes - a.likes);
+        const topLiked = sortedPostsByLikes.slice(0, 4);
+
+        // Sort posts by updatedAt in descending order (latest posts first)
+        const sortedPostsByUpdatedAt = [...posts].sort((a, b) => {
+          // Convert updatedAt strings to Date objects for comparison
+          const updatedAtA = new Date(a.updatedAt);
+          const updatedAtB = new Date(b.updatedAt);
+          return updatedAtB - updatedAtA; // descending order
+        });
+        const recent = sortedPostsByUpdatedAt.slice(0, 5);
+
         setPosts(posts);
-        console.log("object returned", response.data.data);
+        setTopLikedPosts(topLiked);
+        setRecentPosts(recent);
+
+        console.log("All posts:", posts);
+        console.log("Top 4 most liked posts:", topLiked);
+        console.log("Top 5 recent posts:", recent);
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
@@ -30,15 +53,15 @@ const BlogHomepage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen    overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden">
       {/* Categories */}
       <Categories posts={posts} />
 
-      {/* Featured Posts */}
-      <FeaturedPosts posts={posts} />
+      {/* Featured Posts (Top 4 most liked) */}
+      <FeaturedPosts posts={topLikedPosts} />
 
-      {/* Recent Posts and Tags */}
-      <RecentPosts posts={posts} />
+      {/* Recent Posts (Top 3 most recent by updatedAt descending) */}
+      <RecentPosts posts={recentPosts} />
     </div>
   );
 };

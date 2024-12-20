@@ -14,10 +14,20 @@ import {
 } from "react-icons/fa";
 import ToggleTheme from "./ToggleTheme";
 import Link from "next/link";
+import RecentPosts from "./RecentPosts";
+import axios from "axios";
+import Search from "./SearchCard";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 const BlogWebsite = () => {
+  const { user } = useAuth();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const gosearch = () => {
+    router.push(`/code/search`);
+  };
 
   return (
     <div className="  ">
@@ -29,7 +39,12 @@ const BlogWebsite = () => {
           <div className="flex flex-col items-center">
             <h1 className="text-3xl font-bold mb-4">Blog </h1>
             <Link href="/code">
-              <Image src="/images/logo.svg" width={200} height={200} />
+              <Image
+                src="/images/logo.svg"
+                alt="logo"
+                width={200}
+                height={200}
+              />
               <div className="pt-10"> </div>
             </Link>
 
@@ -64,7 +79,7 @@ const BlogWebsite = () => {
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="hover:text-blue-500">
+                    <a href="/code/allblog" className="hover:text-blue-500">
                       Blog
                     </a>
                   </li>
@@ -82,27 +97,31 @@ const BlogWebsite = () => {
               </div>
 
               <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => setIsSearchOpen(!isSearchOpen)}
-                  className="hover:text-blue-500"
-                >
+                <button onClick={gosearch} className="hover:text-blue-500">
                   <FaSearch size={20} />
                 </button>
                 <ToggleTheme />
+                {!user ? (
+                  <Link
+                    href="/sign-in"
+                    className="text-blue-500 px-2 py-2 font-semibold border-b-2 border-transparent hover:border-blue-500  transition duration-200"
+                  >
+                    Login
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => signOut()}
+                    className="text-red-500 px-2 py-2 font-semibold border-b-2 border-transparent hover:border-blue-500  transition duration-200"
+                  >
+                    Logout
+                  </button>
+                )}
+                {/* <button class="text-green-500 px-2 py-2 font-semibold border-b-2 border-transparent hover:border-green-500  transition duration-200">
+                  Signup
+                </button> */}
               </div>
             </div>
           </nav>
-
-          {/* Search Bar */}
-          {isSearchOpen && (
-            <div className="mt-4">
-              <input
-                type="text"
-                placeholder="Search blog posts..."
-                className="w-full p-2 border rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-700"
-              />
-            </div>
-          )}
         </div>
       </header>
 

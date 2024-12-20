@@ -13,6 +13,7 @@ import {
   FaGamepad,
   FaFilm,
 } from "react-icons/fa";
+import Link from "next/link";
 
 const Categories = ({ posts }) => {
   console.log("categories", posts);
@@ -56,7 +57,8 @@ const Categories = ({ posts }) => {
         {uniqueTags.map((tag, index) => {
           const Icon = getIconForTag(tag);
           return (
-            <button
+            <Link
+              href="/code/allblog"
               key={index}
               onClick={() => setSelectedCategory(tag)}
               className={`p-6 rounded-xl border dark:border-white/10 border-black/10 
@@ -69,7 +71,7 @@ const Categories = ({ posts }) => {
             >
               <Icon className="w-8 h-8 mx-auto mb-4 text-purple-400 group-hover:text-purple-300 transition-colors duration-300" />
               <p className="text-center text-sm font-medium">{tag}</p>
-            </button>
+            </Link>
           );
         })}
       </div>

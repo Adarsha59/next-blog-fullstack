@@ -42,6 +42,7 @@ const RecentPosts = ({ posts }) => {
               >
                 <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
               </button>
+              <p className="text-sm text-gray-500 mb-2">By {post.author}</p>
 
               <p className="dark:text-white/70 text-black/70  mb-4">
                 {post.description}

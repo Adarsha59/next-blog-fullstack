@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import {
   Zilla_Slab,
@@ -34,10 +35,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${dancescript.variable} antialiased`}>
-        <main className={zillaSlab.className}>{children}</main>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`${dancescript.variable} antialiased`}>
+          <main className={zillaSlab.className}>{children}</main>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

@@ -12,6 +12,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
+import LikeButton from "../../../_components/Like";
 
 const BlogPost = ({ params }) => {
   const { id } = params;
@@ -49,9 +50,11 @@ const BlogPost = ({ params }) => {
               {post.tags.length > 0 ? post.tags[0] : "No Category"}
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white transition-all duration-300">
+          <h1 className="  text-4xl md:text-5xl font-bold text-gray-900 dark:text-white transition-all duration-300">
             {post.title}
           </h1>
+          <LikeButton blogId={post._id} />
+
           <div className="flex items-center space-x-4">
             <img
               src={post.author.image}
