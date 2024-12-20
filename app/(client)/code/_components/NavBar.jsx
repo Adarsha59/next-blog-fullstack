@@ -18,10 +18,12 @@ import RecentPosts from "./RecentPosts";
 import axios from "axios";
 import Search from "./SearchCard";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+import { SignOutButton, useAuth, useUser } from "@clerk/nextjs";
 
 const BlogWebsite = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
+
+  console.log("user", user);
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -88,11 +90,16 @@ const BlogWebsite = () => {
                       Contact
                     </a>
                   </li>
-                  <li>
-                    <a href="/admin/dashboard" className="hover:text-blue-500">
-                      Admin
-                    </a>
-                  </li>
+                  {user ? (
+                    <li>
+                      <a
+                        href="/admin/dashboard"
+                        className=" text-red-800 font-bold hover:text-yellow-500"
+                      >
+                        Admin
+                      </a>
+                    </li>
+                  ) : null}
                 </ul>
               </div>
 
@@ -109,12 +116,12 @@ const BlogWebsite = () => {
                     Login
                   </Link>
                 ) : (
-                  <button
-                    onClick={() => signOut()}
-                    className="text-red-500 px-2 py-2 font-semibold border-b-2 border-transparent hover:border-blue-500  transition duration-200"
-                  >
-                    Logout
-                  </button>
+                  // Use SignOutButton directly for logout functionality
+                  <SignOutButton>
+                    <button className="text-red-500 px-2 py-2 font-semibold border-b-2 border-transparent hover:border-blue-500 transition duration-200">
+                      Logout
+                    </button>
+                  </SignOutButton>
                 )}
                 {/* <button class="text-green-500 px-2 py-2 font-semibold border-b-2 border-transparent hover:border-green-500  transition duration-200">
                   Signup
