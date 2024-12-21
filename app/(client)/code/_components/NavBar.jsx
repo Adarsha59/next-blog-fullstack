@@ -21,9 +21,11 @@ import { useRouter } from "next/navigation";
 import { SignOutButton, useAuth, useUser } from "@clerk/nextjs";
 
 const BlogWebsite = () => {
-  const { user } = useUser();
+  // const { user } = useUser();
+  // console.log("username", user);
+  const { isSignedIn, user, isLoaded } = useUser();
 
-  console.log("user", user);
+  // console.log("First Name:", user.firstName);
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -93,10 +95,10 @@ const BlogWebsite = () => {
                   {user ? (
                     <li>
                       <a
-                        href="/admin/dashboard"
+                        href={`/admin/${user.firstName}/dashboard`}
                         className=" text-red-800 font-bold hover:text-yellow-500"
                       >
-                        Admin
+                        {user.firstName}'s Admin
                       </a>
                     </li>
                   ) : null}
