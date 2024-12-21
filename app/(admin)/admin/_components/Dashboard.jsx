@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   FaRegNewspaper,
   FaRegCheckCircle,
@@ -8,53 +10,80 @@ import {
 } from "react-icons/fa";
 
 const DashboardOverview = () => {
-  const stats = [
-    {
-      id: 1,
-      label: "Total Posts",
-      value: 2489,
-      icon: <FaRegNewspaper className="w-8 h-8" />,
-      bgColor: "bg-blue-50",
-      textColor: "text-blue-600",
-      iconBg: "bg-blue-100",
-    },
-    {
-      id: 2,
-      label: "Published Posts",
-      value: 1856,
-      icon: <FaRegCheckCircle className="w-8 h-8" />,
-      bgColor: "bg-green-50",
-      textColor: "text-green-600",
-      iconBg: "bg-green-100",
-    },
-    {
-      id: 3,
-      label: "Drafts",
-      value: 633,
-      icon: <FaRegEdit className="w-8 h-8" />,
-      bgColor: "bg-yellow-50",
-      textColor: "text-yellow-600",
-      iconBg: "bg-yellow-100",
-    },
-    {
-      id: 4,
-      label: "Comments",
-      value: 12567,
-      icon: <FaRegComments className="w-8 h-8" />,
-      bgColor: "bg-purple-50",
-      textColor: "text-purple-600",
-      iconBg: "bg-purple-100",
-    },
-    {
-      id: 5,
-      label: "Site Traffic",
-      value: 156789,
-      icon: <FaUsers className="w-8 h-8" />,
-      bgColor: "bg-pink-50",
-      textColor: "text-pink-600",
-      iconBg: "bg-pink-100",
-    },
-  ];
+  const [posts, setPosts] = useState([]);
+  const [stats, setStats] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("/api/blog/read");
+        const postsData = response.data.data;
+        setPosts(postsData);
+        console.log("object", postsData);
+        // Calculate statistics
+        const totalPosts = postsData.length;
+        const drafts = postsData.filter(
+          (post) => post.status === "draft"
+        ).length;
+        const published = postsData.filter(
+          (post) => post.status === "published"
+        ).length;
+
+        // Update stats
+        setStats([
+          {
+            id: 1,
+            label: "Total Postss",
+            value: totalPosts,
+            icon: <FaRegNewspaper className="w-8 h-8" />,
+            bgColor: "bg-blue-50",
+            textColor: "text-blue-600",
+            iconBg: "bg-blue-100",
+          },
+          {
+            id: 2,
+            label: "Published Posts",
+            value: published,
+            icon: <FaRegCheckCircle className="w-8 h-8" />,
+            bgColor: "bg-green-50",
+            textColor: "text-green-600",
+            iconBg: "bg-green-100",
+          },
+          {
+            id: 3,
+            label: "Drafts",
+            value: drafts,
+            icon: <FaRegEdit className="w-8 h-8" />,
+            bgColor: "bg-yellow-50",
+            textColor: "text-yellow-600",
+            iconBg: "bg-yellow-100",
+          },
+          {
+            id: 4,
+            label: "Comments",
+            value: 12567, // Placeholder value for now
+            icon: <FaRegComments className="w-8 h-8" />,
+            bgColor: "bg-purple-50",
+            textColor: "text-purple-600",
+            iconBg: "bg-purple-100",
+          },
+          {
+            id: 5,
+            label: "Site Traffic",
+            value: 156789, // Placeholder value for now
+            icon: <FaUsers className="w-8 h-8" />,
+            bgColor: "bg-pink-50",
+            textColor: "text-pink-600",
+            iconBg: "bg-pink-100",
+          },
+        ]);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   const StatCard = ({ label, value, icon, bgColor, textColor, iconBg }) => (
     <div
@@ -75,7 +104,7 @@ const DashboardOverview = () => {
   );
 
   return (
-    <div className="p-6  rounded-2xl shadow-sm">
+    <div className="p-6 rounded-2xl shadow-sm">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">
         Dashboard Overview
       </h2>

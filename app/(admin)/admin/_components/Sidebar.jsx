@@ -12,6 +12,7 @@ import {
   FiMenu,
   FiX,
 } from "react-icons/fi";
+import { UserButton } from "@clerk/nextjs";
 
 const AdminNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,34 +31,25 @@ const AdminNavbar = () => {
       path: "/admin/blogpost",
       icon: <FiFileText className="w-5 h-5" />,
     },
-    {
-      id: "categories",
-      label: "Categories",
-      path: "/admin/categories", // Ensure path is defined
-      icon: <FiFolder className="w-5 h-5" />,
-    },
+
     {
       id: "comments",
       label: "Comments",
       path: "/admin/comments",
       icon: <FiMessageSquare className="w-5 h-5" />,
     },
-    {
-      id: "users",
-      label: "Users",
-      path: "/admin/users",
-      icon: <FiUsers className="w-5 h-5" />,
-    },
+
     {
       id: "settings",
-      label: "Settings",
-      path: "/admin/settings",
-      icon: <FiSettings className="w-5 h-5" />,
+      label: "profile",
+      path: "",
+      // <FiSettings className="w-5 h-5" />
+      icon: <UserButton className="" />,
     },
     {
       id: "logout",
-      label: "Logout",
-      path: "/logout", // Add logout route if needed
+      label: "back-to-blog",
+      path: "/code", // Add logout route if needed
       icon: <FiLogOut className="w-5 h-5" />,
     },
   ];

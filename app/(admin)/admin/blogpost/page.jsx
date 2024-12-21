@@ -93,6 +93,9 @@ const BlogPostsTable = () => {
                 Created At
               </th>
               <th className="px-6 py-3 text-left font-semibold text-gray-600">
+                Updated At
+              </th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-600">
                 Actions
               </th>
             </tr>
@@ -115,6 +118,11 @@ const BlogPostsTable = () => {
                 <td className="px-6 py-4">
                   {post.createdAt
                     ? format(new Date(post.createdAt), "yyyy-MM-dd")
+                    : "N/A"}
+                </td>
+                <td className="px-6 py-4">
+                  {post.updatedAt
+                    ? format(new Date(post.updatedAt), "yyyy-MM-dd")
                     : "N/A"}
                 </td>
                 <td className="px-6 py-4">

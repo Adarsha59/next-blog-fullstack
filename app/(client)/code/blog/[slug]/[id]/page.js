@@ -13,19 +13,38 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import LikeButton from "../../../_components/Like";
+import FeaturedPosts from "../../../_components/FeaturedPosts";
 
 const BlogPost = ({ params }) => {
-  const { id } = params;
-  console.log("Blog ID:", id);
+  const { id } = params; // id from dynamic route
   const [post, setPost] = useState(null);
+  const [topLikedPosts, setTopLikedPosts] = useState([]);
 
+  // Fetching the top liked posts for the sidebar
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("/api/blog/read");
+        const published = response.data.data;
+        const posts = published.filter((post) => post.status === "published");
+        const sortedPostsByLikes = [...posts].sort((a, b) => b.likes - a.likes);
+        const topLiked = sortedPostsByLikes.slice(0, 4);
+
+        setTopLikedPosts(topLiked);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  // Fetching the specific blog post data
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const response = await axios.post("/api/blog/oneread", { id });
         const fetchedPost = response.data.data;
         setPost(fetchedPost);
-        console.log("Fetched Blog Post:", fetchedPost);
       } catch (error) {
         console.error("Error fetching blog post:", error);
       }
@@ -50,11 +69,10 @@ const BlogPost = ({ params }) => {
               {post.tags.length > 0 ? post.tags[0] : "No Category"}
             </span>
           </div>
-          <h1 className="  text-4xl md:text-5xl font-bold text-gray-900 dark:text-white transition-all duration-300">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white transition-all duration-300">
             {post.title}
           </h1>
           <LikeButton blogId={post._id} />
-
           <div className="flex items-center space-x-4">
             <img
               src={post.author.image}
@@ -93,10 +111,6 @@ const BlogPost = ({ params }) => {
           className="w-full h-96 object-cover rounded-xl mb-8 transition-transform duration-300 hover:scale-[1.02]"
         />
 
-        {/* <article className="prose lg:prose-xl max-w-none text-gray-900 dark:text-white">
-          <p>{post.content}</p>
-        </article> */}
-
         <article
           className="prose lg:prose-xl max-w-none text-gray-900 dark:text-white"
           dangerouslySetInnerHTML={{ __html: post.content }}
@@ -107,8 +121,6 @@ const BlogPost = ({ params }) => {
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
             Comments ({post.comments.length})
           </h2>
-
-          {/* Comment Form */}
           <form className="mb-8 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <input
@@ -132,11 +144,10 @@ const BlogPost = ({ params }) => {
             </button>
           </form>
 
-          {/* Comments List */}
           <div className="space-y-6">
             {post.comments.map((comment) => (
               <div
-                key={comment.id}
+                key={comment._id} // Ensure to use unique identifier
                 className="bg-white p-6 rounded-xl shadow-sm dark:bg-gray-800 dark:text-white"
               >
                 <div className="flex items-center space-x-4 mb-4">
@@ -159,27 +170,10 @@ const BlogPost = ({ params }) => {
             ))}
           </div>
         </section>
+
         {/* Related Posts */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-            Related Posts
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {post.comments.map((relatedPost) => (
-              <div key={relatedPost.id} className="group cursor-pointer">
-                <div className="relative overflow-hidden rounded-xl">
-                  <img
-                    src={relatedPost.image}
-                    alt={relatedPost.title}
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {relatedPost.title}
-                </h3>
-              </div>
-            ))}
-          </div>
+          <FeaturedPosts posts={topLikedPosts} title="Related Posts" />
         </section>
 
         {/* Author Bio */}
@@ -189,7 +183,7 @@ const BlogPost = ({ params }) => {
           </h3>
           <div className="flex items-center space-x-4">
             <img
-              src={post.image}
+              src={post.author.image}
               alt={post.author}
               className="w-16 h-16 rounded-full"
             />
@@ -203,17 +197,6 @@ const BlogPost = ({ params }) => {
             </div>
           </div>
         </section>
-        {/* Pagination */}
-        <div className="flex justify-between items-center mt-12">
-          <button className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500">
-            <FaChevronLeft />
-            <span>Previous</span>
-          </button>
-          <button className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500">
-            <span>Next</span>
-            <FaChevronRight />
-          </button>
-        </div>
       </main>
     </div>
   );
