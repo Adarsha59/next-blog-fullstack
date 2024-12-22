@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import SearchCard from "../_components/SearchCard";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,7 +27,6 @@ const SearchPage = () => {
         const filteredPosts = posts.filter((post) =>
           post.title.toLowerCase().includes(searchQuery.toLowerCase())
         );
-
         setResults(filteredPosts);
       } catch (error) {
         console.error("Error fetching posts:", error);

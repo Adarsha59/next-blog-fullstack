@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios"; // Import axios for HTTP requests
+import toast from "react-hot-toast";
 
 const LikeButton = ({ blogId }) => {
   const [isLiked, setIsLiked] = useState(false);
@@ -31,10 +32,10 @@ const LikeButton = ({ blogId }) => {
       if (blogId) {
         // Make a POST request to your backend API
         const response = await axios.post("/api/blog/like", { blogId });
-        console.log("Like submitted successfully:", response.data);
+        toast.success("Like submitted successfully");
       }
     } catch (error) {
-      console.error("Error submitting like:", error);
+      toast.error("Error submitting like:");
     }
   };
 

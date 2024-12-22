@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import JoditEditor from "jodit-react";
 import { useUser } from "@clerk/nextjs";
+import toast from "react-hot-toast";
 
 const AddPost = () => {
   const { user } = useUser();
+  const router = useRouter();
   console.log("user", user);
   const editor = useRef(null);
   const searchParams = useSearchParams();
@@ -33,7 +35,6 @@ const AddPost = () => {
           const response = await axios.post("/api/blog/oneread", {
             id: postId,
           });
-
           const post = response.data.data; // Assuming API returns post data under 'data'
           setFormData({
             title: post.title || "",
@@ -137,14 +138,16 @@ const AddPost = () => {
     try {
       if (postId) {
         await axios.put(`/api/blog/${postId}/edit`, dataToSubmit); // Update existing post
-        console.log("Post Updated:", dataToSubmit);
+        toast.success("Post Updated Success");
       } else {
         await axios.post("/api/blog/create", dataToSubmit); // Create new post
-        console.log("Post Created:", dataToSubmit);
+        toast.success("Post Created Success");
       }
       handleReset();
+      router.push(`/admin/${user.firstName}/dashboard`);
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error("Can't submit form", error);
     }
   };
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { format } from "date-fns";
 import { useUser } from "@clerk/nextjs";
+import toast from "react-hot-toast";
 const BlogPostsTable = () => {
   const { user } = useUser();
   const router = useRouter();
@@ -26,7 +27,6 @@ const BlogPostsTable = () => {
         const userPosts = fetchedPosts.filter(
           (post) => post.author === user.fullName
         );
-        console.log("h", userPosts);
 
         setPosts(userPosts);
       } catch (error) {
@@ -50,12 +50,13 @@ const BlogPostsTable = () => {
     try {
       // Send a DELETE request to your API with the ID in the URL
       const response = await axios.delete(`/api/blog/${id}/delete`);
-      console.log(response.data.message); // Success message from the backend
 
+      // Success message from the backend
+      toast.success("Post deleted successfully");
       // Optionally, refresh the posts or handle success
       setPosts(posts.filter((post) => post._id !== id)); // Remove the deleted post from the local state
     } catch (error) {
-      console.error("Error deleting post:", error);
+      toast.error("Error deleting post:", error);
       // Optionally show an alert or toast
     }
   };

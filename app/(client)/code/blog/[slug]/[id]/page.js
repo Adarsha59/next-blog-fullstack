@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 import LikeButton from "../../../_components/Like";
 import FeaturedPosts from "../../../_components/FeaturedPosts";
+import toast from "react-hot-toast";
 
 const BlogPost = ({ params }) => {
   const { id } = params; // id from dynamic route
@@ -79,7 +80,7 @@ const BlogPost = ({ params }) => {
 
     try {
       const response = await axios.post("/api/comment/create", finalComment);
-      console.log("Comment submitted successfully:", response.data);
+      toastr.success("Comment submitted successfully");
       setFormData({
         user: "",
         email: "",
@@ -87,10 +88,8 @@ const BlogPost = ({ params }) => {
       });
       // Optionally reset formData or show a success message
     } catch (error) {
-      console.error(
-        "Error submitting comment:",
-        error.response ? error.response.data : error.message
-      );
+      // Show an error message using a library like react-toast
+      toast.error("Can't submit comment");
     }
   };
 
