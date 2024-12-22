@@ -288,7 +288,7 @@ const AddPost = () => {
               </div>
 
               {/* authir Image Link Input */}
-              {/* <div>
+              <div>
                 <label
                   htmlFor="image"
                   className="text-lg font-semibold text-gray-700"
@@ -304,7 +304,7 @@ const AddPost = () => {
                   placeholder="Image URL (optional)"
                   className={`w-full bg-transparent px-4 py-3 text-lg font-bold border rounded-lg`}
                 />
-              </div> */}
+              </div>
               <div>
                 <label
                   htmlFor="image"

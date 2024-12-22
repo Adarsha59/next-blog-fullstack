@@ -7,17 +7,8 @@ import { useRouter } from "next/navigation";
 const LoadingAnimation = () => {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(true);
-  const [audio] = useState(
-    new Audio(
-      "https://assets.mixkit.co/sfx/preview/mixkit-futuristic-digital-sound-2854.mp3"
-    )
-  );
 
   useEffect(() => {
-    audio.volume = 0.1;
-    audio.loop = true;
-    audio.play().catch((error) => console.log("Audio playback failed:", error));
-
     const timer = setTimeout(() => {
       setIsVisible(false);
       router.push("/code");
@@ -27,10 +18,8 @@ const LoadingAnimation = () => {
 
     return () => {
       clearTimeout(timer);
-      audio.pause();
-      audio.currentTime = 0;
     };
-  }, [audio]);
+  }, []);
 
   return (
     <AnimatePresence>

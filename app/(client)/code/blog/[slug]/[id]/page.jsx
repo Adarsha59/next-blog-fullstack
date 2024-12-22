@@ -15,9 +15,15 @@ import {
 import LikeButton from "../../../_components/Like";
 import FeaturedPosts from "../../../_components/FeaturedPosts";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 const BlogPost = ({ params }) => {
-  const { id } = params; // id from dynamic route
+  const { id } = params || {};
+
+  console.log("id", id);
+  if (!id) {
+    return <div>Loading...</div>;
+  }
   const [post, setPost] = useState(null);
   const [topLikedPosts, setTopLikedPosts] = useState([]);
   const [formData, setFormData] = useState({
@@ -80,7 +86,7 @@ const BlogPost = ({ params }) => {
 
     try {
       const response = await axios.post("/api/comment/create", finalComment);
-      toastr.success("Comment submitted successfully");
+      toast.success("Comment submitted successfully");
       setFormData({
         user: "",
         email: "",
@@ -100,7 +106,7 @@ const BlogPost = ({ params }) => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="space-y-4">
           <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
             <span className="bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100 px-3 py-1 rounded-full">
@@ -126,6 +132,7 @@ const BlogPost = ({ params }) => {
               </div>
             </div>
           </div>
+
           <div className="flex space-x-4">
             <button className="p-2 rounded-full bg-blue-100 hover:bg-blue-200 dark:bg-blue-800 dark:hover:bg-blue-700 transition-colors">
               <FaFacebook className="text-blue-600 dark:text-blue-400" />
@@ -138,10 +145,9 @@ const BlogPost = ({ params }) => {
             </button>
           </div>
         </div>
-      </header>
-
+      </div>
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         <LikeButton blogId={post._id} />
         <img
           src={post.image}
@@ -243,7 +249,7 @@ const BlogPost = ({ params }) => {
             </div>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 };
