@@ -2,17 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-.dark {
-  --background: #101214; /* Dark theme background */
-  --foreground: #FFFFFF; /* Dark theme foreground (text) */
+:root {
+  --background: #fafafa; /* Default light theme background */
 }
-
+.dark {
+  --background: #262323; /* Dark theme background */
+  --foreground: #ffffff; /* Dark theme foreground (text) */
+}
 
 body {
   color: var(--foreground);
   background: var(--background);
+  foreground: var(--foreground);
 }
 
 @keyframes blobAnimation {

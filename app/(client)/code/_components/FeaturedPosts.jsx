@@ -6,13 +6,23 @@ import { FaHeart, FaClock } from "react-icons/fa";
 const FeaturedPosts = ({ posts, title }) => {
   const router = useRouter();
   // Function to calculate read time based on the content length
-  const calculateReadTime = (content) => {
-    if (!content) return 0; // Return 0 if content is empty or undefined
+  const calculateReadTime = (content, wordsPerMinute = 238) => {
+    if (!content || typeof content !== "string") return 0; // Return 0 for invalid input
 
-    const wordsPerMinute = 200; // Average reading speed
-    const wordCount = content.split("").length;
-    console.log("time", Math.ceil(wordCount / wordsPerMinute)); // Split content into words
-    return Math.ceil(wordCount / wordsPerMinute); // Rounding up to the nearest minute
+    // Extract text content by removing HTML tags
+    const textContent = content.replace(/<[^>]*>/g, " ");
+    const cleanedData = textContent.replace(/&nbsp;/g, " ");
+
+    // Step 2: Remove extra spaces and trim
+    const normalizedData = cleanedData.replace(/\s+/g, "    ").trim();
+
+    // Step 3: Count words
+    // const wordCount = normalizedData.split(/\s+/).length;
+    console.log("pure", cleanedData); // Remove all HTML tags
+    const wordCount = normalizedData.trim().split(/\s+/).length; // Split by whitespace to count words
+
+    // Calculate and return the reading time in minutes
+    return Math.ceil(wordCount / wordsPerMinute);
   };
   const slugify = (text) => {
     return text

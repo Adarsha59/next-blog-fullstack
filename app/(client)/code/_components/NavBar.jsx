@@ -9,6 +9,7 @@ import {
   FaMoon,
   FaSun,
   FaBars,
+  FaGithub,
   FaTimes,
   FaSearch,
 } from "react-icons/fa";
@@ -53,10 +54,18 @@ const BlogWebsite = () => {
             </Link>
 
             <div className="flex space-x-4 mb-9">
-              <FaFacebook className="text-2xl hover:text-blue-600 cursor-pointer" />
-              <FaTwitter className="text-2xl hover:text-blue-400 cursor-pointer" />
-              <FaInstagram className="text-2xl hover:text-pink-600 cursor-pointer" />
-              <FaLinkedin className="text-2xl hover:text-blue-800 cursor-pointer" />
+              <Link href="https://www.facebook.com/paudyaladarsha" passHref>
+                <FaFacebook className="text-2xl hover:text-blue-600 cursor-pointer" />
+              </Link>
+              <Link href="https://x.com/Adarsha59" passHref>
+                <FaTwitter className="text-2xl hover:text-blue-400 cursor-pointer" />
+              </Link>
+              <Link href="https://github.com/Adarsha59" passHref>
+                <FaGithub className="text-2xl hover:text-pink-600 cursor-pointer" />
+              </Link>
+              <Link href="https://www.linkedin.com/in/adarshapaudyal" passHref>
+                <FaLinkedin className="text-2xl hover:text-blue-800 cursor-pointer" />
+              </Link>
             </div>
           </div>
 

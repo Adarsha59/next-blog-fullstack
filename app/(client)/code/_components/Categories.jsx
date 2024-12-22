@@ -40,7 +40,7 @@ const Categories = ({ posts }) => {
   console.log("categories", posts);
 
   // Extract unique tags from posts
-  const uniqueTags = [...new Set(posts.flatMap((post) => post.tags))];
+  // const uniqueTags = [...new Set(posts.flatMap((post) => post.tags))];
 
   // Centralized mapping of keywords to icons
   const categoryIcons = {
@@ -76,6 +76,18 @@ const Categories = ({ posts }) => {
     Medicine: FaMedkit,
     Security: FaUserShield,
   };
+  const normalizedTagsMap = new Map();
+
+  // Normalize tags and ensure uniqueness
+  posts
+    .flatMap((post) => post.tags)
+    .forEach((tag) => {
+      const normalizedTag = tag.trim().toLowerCase();
+      if (!normalizedTagsMap.has(normalizedTag)) {
+        normalizedTagsMap.set(normalizedTag, tag.trim()); // Map normalized to original format
+      }
+    });
+  const uniqueTags = Array.from(normalizedTagsMap.values());
 
   // Function to dynamically get the icon for a tag
   const getIconForTag = (tag) => {
