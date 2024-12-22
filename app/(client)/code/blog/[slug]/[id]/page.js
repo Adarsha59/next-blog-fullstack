@@ -75,7 +75,7 @@ const BlogPost = ({ params }) => {
           <LikeButton blogId={post._id} />
           <div className="flex items-center space-x-4">
             <img
-              src={post.author.image}
+              src={post.author_image}
               alt={post.author}
               className="w-12 h-12 rounded-full"
             />
@@ -183,7 +183,7 @@ const BlogPost = ({ params }) => {
           </h3>
           <div className="flex items-center space-x-4">
             <img
-              src={post.author.image}
+              src={post.author_image}
               alt={post.author}
               className="w-16 h-16 rounded-full"
             />

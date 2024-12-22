@@ -19,44 +19,40 @@ const AdminNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("dashboard");
 
-  const menuItems = [
-    {
-      id: "dashboard",
-      label: "Dashboard",
-      path: `/admin/${user.firstName}/dashboard`,
-
-      icon: <FiHome className="w-5 h-5" />,
-    },
-    {
-      id: "posts",
-      label: "Posts",
-      path: `/admin/${user.firstName}/blogpost`,
-
-      icon: <FiFileText className="w-5 h-5" />,
-    },
-
-    {
-      id: "comments",
-      label: "Comments",
-      path: `/admin/${user.firstName}/comments`,
-
-      icon: <FiMessageSquare className="w-5 h-5" />,
-    },
-
-    {
-      id: "settings",
-      label: "profile",
-      path: "",
-      // <FiSettings className="w-5 h-5" />
-      icon: <UserButton className="" />,
-    },
-    {
-      id: "logout",
-      label: "back-to-blog",
-      path: "/code", // Add logout route if needed
-      icon: <FiLogOut className="w-5 h-5" />,
-    },
-  ];
+  const menuItems = user
+    ? [
+        {
+          id: "dashboard",
+          label: "Dashboard",
+          path: `/admin/${user.firstName}/dashboard`,
+          icon: <FiHome className="w-5 h-5" />,
+        },
+        {
+          id: "posts",
+          label: "Posts",
+          path: `/admin/${user.firstName}/blogpost`,
+          icon: <FiFileText className="w-5 h-5" />,
+        },
+        {
+          id: "comments",
+          label: "Comments",
+          path: `/admin/${user.firstName}/comments`,
+          icon: <FiMessageSquare className="w-5 h-5" />,
+        },
+        {
+          id: "settings",
+          label: "Profile",
+          path: "",
+          icon: <UserButton className="" />,
+        },
+        {
+          id: "logout",
+          label: "Back to Blog",
+          path: "/code",
+          icon: <FiLogOut className="w-5 h-5" />,
+        },
+      ]
+    : [];
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);

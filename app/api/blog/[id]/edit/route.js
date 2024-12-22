@@ -11,8 +11,16 @@ export async function PUT(req, { params }) {
     const { id } = params; // Extract id from the URL
 
     // Get the rest of the data from the request body
-    const { title, description, content, author, tags, status, image } =
-      await req.json();
+    const {
+      title,
+      description,
+      content,
+      author,
+      author_image,
+      tags,
+      status,
+      image,
+    } = await req.json();
 
     if (!id) {
       return NextResponse.json({ message: "ID is required" }, { status: 400 });
@@ -27,6 +35,7 @@ export async function PUT(req, { params }) {
         content,
         tags,
         author,
+        author_image,
         status,
         image,
         updatedAt: Date.now(),

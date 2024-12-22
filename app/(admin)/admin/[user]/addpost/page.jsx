@@ -8,6 +8,7 @@ import { useUser } from "@clerk/nextjs";
 
 const AddPost = () => {
   const { user } = useUser();
+  console.log("user", user);
   const editor = useRef(null);
   const searchParams = useSearchParams();
   const postId = searchParams.get("id"); // Fetch postId from query params
@@ -15,7 +16,8 @@ const AddPost = () => {
     title: "",
     description: "",
     content: "",
-    author: "",
+    author: user.fullName,
+    author_image: user.imageUrl,
     tags: "",
     image: "",
     status: "draft", // Default to "draft"
@@ -151,7 +153,6 @@ const AddPost = () => {
       title: "",
       description: "",
       content: "",
-      author: "",
       tags: "",
       image: "",
       status: "draft",
@@ -286,6 +287,23 @@ const AddPost = () => {
               </div>
 
               {/* Image Link Input */}
+              <div>
+                <label
+                  htmlFor="image"
+                  className="text-lg font-semibold text-gray-700"
+                >
+                  Author Image URL
+                </label>
+                <input
+                  type="text"
+                  id="author_image"
+                  name="author_image"
+                  value={formData.author_image}
+                  onChange={handleChange}
+                  placeholder="Image URL (optional)"
+                  className={`w-full bg-transparent px-4 py-3 text-lg font-bold border rounded-lg`}
+                />
+              </div>
               <div>
                 <label
                   htmlFor="image"

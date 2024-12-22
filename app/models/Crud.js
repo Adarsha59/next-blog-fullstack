@@ -25,7 +25,6 @@ const BlogSchema = new mongoose.Schema({
   },
   author: {
     type: String,
-    required: true,
     trim: true,
   },
   tags: {
@@ -33,6 +32,10 @@ const BlogSchema = new mongoose.Schema({
     default: [], // Tags related to the blog for categorization
   },
   image: {
+    type: String,
+    trim: true, // URL or file path for a blog image
+  },
+  author_image: {
     type: String,
     trim: true, // URL or file path for a blog image
   },
