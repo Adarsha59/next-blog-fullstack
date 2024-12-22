@@ -39,7 +39,7 @@ const LikeButton = ({ blogId }) => {
   };
 
   return (
-    <div>
+    <div className="pb-10">
       <div className="relative">
         <motion.button
           whileHover={{
@@ -60,7 +60,7 @@ const LikeButton = ({ blogId }) => {
             focus:ring-2
             focus:ring-offset-2
             focus:ring-red-500
-            ${isLiked ? "bg-red-50" : "bg-white"}
+            ${isLiked ? "bg-red-50" : "bg-transparent"}
             hover:shadow-xl
             active:shadow-inner
           `}
@@ -93,7 +93,6 @@ const LikeButton = ({ blogId }) => {
             </div>
           )}
         </motion.button>
-
         <AnimatePresence>
           {particles.map((particle) => (
             <motion.div

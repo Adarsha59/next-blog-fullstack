@@ -33,16 +33,16 @@ const AdminNavbar = () => {
           path: `/admin/${user.firstName}/blogpost`,
           icon: <FiFileText className="w-5 h-5" />,
         },
-        {
-          id: "comments",
-          label: "Comments",
-          path: `/admin/${user.firstName}/comments`,
-          icon: <FiMessageSquare className="w-5 h-5" />,
-        },
+        // {
+        //   id: "comments",
+        //   label: "Comments",
+        //   path: `/admin/${user.firstName}/comments`,
+        //   icon: <FiMessageSquare className="w-5 h-5" />,
+        // },
         {
           id: "settings",
           label: "Profile",
-          path: "",
+          path: `/admin/${user.firstName}/profile`,
           icon: <UserButton className="" />,
         },
         {

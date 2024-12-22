@@ -19,6 +19,11 @@ const BlogPost = ({ params }) => {
   const { id } = params; // id from dynamic route
   const [post, setPost] = useState(null);
   const [topLikedPosts, setTopLikedPosts] = useState([]);
+  const [formData, setFormData] = useState({
+    user: "",
+    email: "",
+    comment: "",
+  });
 
   // Fetching the top liked posts for the sidebar
   useEffect(() => {
@@ -44,6 +49,7 @@ const BlogPost = ({ params }) => {
       try {
         const response = await axios.post("/api/blog/oneread", { id });
         const fetchedPost = response.data.data;
+        console.log("object fetched:", fetchedPost);
         setPost(fetchedPost);
       } catch (error) {
         console.error("Error fetching blog post:", error);
@@ -54,6 +60,39 @@ const BlogPost = ({ params }) => {
       fetchPost();
     }
   }, [id]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    const finalComment = {
+      ...formData,
+      blogId: id, // Directly add blogId using `id` from params
+    };
+    console.log("hi", finalComment);
+
+    try {
+      const response = await axios.post("/api/comment/create", finalComment);
+      console.log("Comment submitted successfully:", response.data);
+      setFormData({
+        user: "",
+        email: "",
+        comment: "",
+      });
+      // Optionally reset formData or show a success message
+    } catch (error) {
+      console.error(
+        "Error submitting comment:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
 
   if (!post) {
     return <div>Loading...</div>;
@@ -72,7 +111,6 @@ const BlogPost = ({ params }) => {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white transition-all duration-300">
             {post.title}
           </h1>
-          <LikeButton blogId={post._id} />
           <div className="flex items-center space-x-4">
             <img
               src={post.author_image}
@@ -105,39 +143,47 @@ const BlogPost = ({ params }) => {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
+        <LikeButton blogId={post._id} />
         <img
           src={post.image}
           alt="Blog Cover"
           className="w-full h-96 object-cover rounded-xl mb-8 transition-transform duration-300 hover:scale-[1.02]"
         />
-
         <article
           className="prose lg:prose-xl max-w-none text-gray-900 dark:text-white"
           dangerouslySetInnerHTML={{ __html: post.content }}
         ></article>
-
         {/* Comments Section */}
         <section className="mt-12">
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
             Comments ({post.comments.length})
           </h2>
-          <form className="mb-8 space-y-4">
+          <form onSubmit={handleCommentSubmit} className="mb-8 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="text"
+                name="user"
+                value={formData.user}
+                onChange={handleInputChange}
                 placeholder="Name"
-                className="p-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-400 outline-none"
+                className="p-3 rounded-lg bg-transparent border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-400 outline-none"
               />
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
                 placeholder="Email"
-                className="p-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-400 outline-none"
+                className="p-3 bg-transparent rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-400 outline-none"
               />
             </div>
             <textarea
+              name="comment"
+              value={formData.comment}
+              onChange={handleInputChange}
               placeholder="Your comment"
               rows="4"
-              className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full p-3 rounded-lg bg-transparent border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-400 outline-none"
             ></textarea>
             <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 transition-colors">
               Post Comment
@@ -147,35 +193,36 @@ const BlogPost = ({ params }) => {
           <div className="space-y-6">
             {post.comments.map((comment) => (
               <div
-                key={comment._id} // Ensure to use unique identifier
-                className="bg-white p-6 rounded-xl shadow-sm dark:bg-gray-800 dark:text-white"
+                key={comment._id}
+                className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 dark:bg-gray-800 dark:text-white"
               >
                 <div className="flex items-center space-x-4 mb-4">
-                  <img
-                    src={comment.avatar}
-                    alt={comment.author}
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div>
-                    <p className="font-medium">{comment.author}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {comment.date}
+                  {/* Avatar - First letter of user's name */}
+                  <div className="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center text-xl font-bold">
+                    {comment.user[0].toUpperCase()}
+                  </div>
+                  <div className="flex flex-col">
+                    <p className="font-semibold text-lg text-gray-900 dark:text-gray-100">
+                      {comment.user}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {new Date(comment.commentedAt).toLocaleString()}
                     </p>
                   </div>
                 </div>
-                <p className="text-gray-700 dark:text-gray-300">
-                  {comment.content}
+
+                {/* Comment Content */}
+                <p className="text-gray-800 dark:text-gray-300 text-base leading-relaxed">
+                  {comment.comment}
                 </p>
               </div>
             ))}
           </div>
         </section>
-
         {/* Related Posts */}
         <section className="mt-12">
           <FeaturedPosts posts={topLikedPosts} title="Related Posts" />
         </section>
-
         {/* Author Bio */}
         <section className="mt-12 bg-white p-6 rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700">
           <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">

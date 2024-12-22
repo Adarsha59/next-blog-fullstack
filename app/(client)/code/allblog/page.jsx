@@ -37,15 +37,15 @@ const BlogPosts = () => {
   return (
     <div className="min-h-screen bg-transparent py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-12 text-center">
-          Latest Blog Posts
+        <h1 className="text-4xl font-bold  mb-12 text-center">
+          All Blog Posts
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map((post) => (
             <button
               key={post._id}
               onClick={() => navigateToPost(post.title, post._id)}
-              className=" text-left dark:bg-black bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105"
+              className=" text-left dark:bg-transparent bg-white border-2 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105"
             >
               <div className="aspect-w-16 aspect-h-9">
                 <img

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { MdCategory } from "react-icons/md";
 import { FiMessageCircle } from "react-icons/fi";
 import {
   FaCode,
@@ -12,6 +13,26 @@ import {
   FaGlobe,
   FaGamepad,
   FaFilm,
+  FaUtensils,
+  FaDumbbell,
+  FaHeartbeat,
+  FaShoppingCart,
+  FaTree,
+  FaCar,
+  FaHome,
+  FaPlane,
+  FaDog,
+  FaCat,
+  FaAppleAlt,
+  FaFlask,
+  FaMicroscope,
+  FaUniversity,
+  FaBriefcase,
+  FaMoneyBillWave,
+  FaGavel,
+  FaBalanceScale,
+  FaMedkit,
+  FaUserShield,
 } from "react-icons/fa";
 import Link from "next/link";
 
@@ -34,6 +55,26 @@ const Categories = ({ posts }) => {
     Travel: FaGlobe,
     Gaming: FaGamepad,
     Film: FaFilm,
+    Food: FaUtensils,
+    Fitness: FaDumbbell,
+    Health: FaHeartbeat,
+    Shopping: FaShoppingCart,
+    Nature: FaTree,
+    Automotive: FaCar,
+    Home: FaHome,
+    Aviation: FaPlane,
+    Pets: FaDog,
+    "Pet Care": FaCat,
+    Nutrition: FaAppleAlt,
+    Science: FaFlask,
+    Research: FaMicroscope,
+    Academia: FaUniversity,
+    Business: FaBriefcase,
+    Finance: FaMoneyBillWave,
+    Law: FaGavel,
+    Justice: FaBalanceScale,
+    Medicine: FaMedkit,
+    Security: FaUserShield,
   };
 
   // Function to dynamically get the icon for a tag
@@ -43,7 +84,7 @@ const Categories = ({ posts }) => {
         return Icon;
       }
     }
-    return FiMessageCircle; // Default icon
+    return MdCategory; // Default icon
   };
 
   const [selectedCategory, setSelectedCategory] = useState(null);

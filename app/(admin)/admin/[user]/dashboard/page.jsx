@@ -1,5 +1,7 @@
 "use client";
+import { useUser } from "@clerk/nextjs";
 import axios from "axios";
+import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import {
   FaRegNewspaper,
@@ -10,6 +12,15 @@ import {
 } from "react-icons/fa";
 
 const DashboardOverview = () => {
+  const { user } = useUser();
+
+  // Add a check to ensure user exists
+  if (!user) {
+    return <div>Loading...</div>; // or any loading state you prefer
+  }
+
+  console.log("object overview", user.fullName);
+
   const [posts, setPosts] = useState([]);
   const [stats, setStats] = useState([]);
 
@@ -17,9 +28,10 @@ const DashboardOverview = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get("/api/blog/read");
-        const postsData = response.data.data;
+        const data = response.data.data;
 
-        setPosts(postsData);
+        // Filter posts authored by the current user
+        const postsData = data.filter((post) => post.author === user.fullName);
 
         // Calculate statistics
         const totalPosts = postsData.length;
@@ -29,6 +41,7 @@ const DashboardOverview = () => {
         const draftPosts = postsData.filter(
           (post) => post.status === "draft"
         ).length;
+        const comments = postsData.filter((post) => post.comments).length;
 
         // Update stats array dynamically
         setStats([
@@ -59,24 +72,6 @@ const DashboardOverview = () => {
             textColor: "text-yellow-600",
             iconBg: "bg-yellow-100",
           },
-          {
-            id: 4,
-            label: "Comments",
-            value: 12567, // Placeholder for future dynamic value
-            icon: <FaRegComments className="w-8 h-8" />,
-            borderColor: "border-purple-500",
-            textColor: "text-purple-600",
-            iconBg: "bg-purple-100",
-          },
-          {
-            id: 5,
-            label: "Site Traffic",
-            value: 156789, // Placeholder for future dynamic value
-            icon: <FaUsers className="w-8 h-8" />,
-            borderColor: "border-pink-500",
-            textColor: "text-pink-600",
-            iconBg: "bg-pink-100",
-          },
         ]);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -84,7 +79,7 @@ const DashboardOverview = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [user]); // Add user as dependency to re-fetch when user changes
 
   const StatCard = ({ label, value, icon, borderColor, textColor, iconBg }) => (
     <div
@@ -92,15 +87,19 @@ const DashboardOverview = () => {
       role="group"
       aria-label={`${label} statistics`}
     >
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-gray-500 text-sm font-medium mb-1">{label}</p>
-          <h3 className={`${textColor} text-2xl font-bold`}>
-            {value.toLocaleString()}
-          </h3>
+      <Link href={`/admin/${user.fullName}/blogpost`}>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-gray-500 text-sm font-medium mb-1">{label}</p>
+            <h3 className={`${textColor} text-2xl font-bold`}>
+              {value.toLocaleString()}
+            </h3>
+          </div>
+          <div className={`${iconBg} p-3 rounded-full ${textColor}`}>
+            {icon}
+          </div>
         </div>
-        <div className={`${iconBg} p-3 rounded-full ${textColor}`}>{icon}</div>
-      </div>
+      </Link>
     </div>
   );
 

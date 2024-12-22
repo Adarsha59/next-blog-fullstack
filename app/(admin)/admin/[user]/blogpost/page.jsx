@@ -8,40 +8,38 @@ import { useUser } from "@clerk/nextjs";
 const BlogPostsTable = () => {
   const { user } = useUser();
   const router = useRouter();
+  const [posts, setPosts] = useState([
+    {
+      id: 1,
+      title: "loading",
+      status: "loading",
+      createdAt: "2024-01-15",
+    },
+  ]);
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get("/api/blog/read");
-        const posts = response.data.data;
-        setPosts(posts);
-        // console.log("object returned", response.data.data);
+        const fetchedPosts = response.data.data;
+
+        // Filter posts authored by the current user
+        const userPosts = fetchedPosts.filter(
+          (post) => post.author === user.fullName
+        );
+        console.log("h", userPosts);
+
+        setPosts(userPosts);
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
     };
-    fetchPosts();
-  }, []);
 
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: "Getting Started with React and Tailwind",
-      status: "Published",
-      createdAt: "2024-01-15",
-    },
-    {
-      id: 2,
-      title: "Best Practices in Modern Web Development",
-      status: "Draft",
-      createdAt: "2024-01-14",
-    },
-    {
-      id: 3,
-      title: "Understanding JavaScript Promises",
-      status: "Published",
-      createdAt: "2024-01-13",
-    },
-  ]);
+    // Only fetch posts if the user object is available
+    if (user) {
+      fetchPosts();
+    }
+  }, [user]);
+
   const gopost = () => {
     router.push(`/admin/${user.firstName}/addpost`);
   };

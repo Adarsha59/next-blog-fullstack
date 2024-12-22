@@ -7,10 +7,10 @@ export async function POST(req) {
     await connectDB();
 
     // Parse the request body
-    const { blogId, user, comment } = await req.json();
+    const { blogId, email, comment, user } = await req.json();
 
     // Validate required fields
-    if (!blogId || !user || !comment) {
+    if (!blogId || !comment || !user) {
       return NextResponse.json(
         {
           message: "Blog ID, user, and comment are required.",
@@ -34,8 +34,9 @@ export async function POST(req) {
 
     // Add the comment to the blog's comments array
     blog.comments.push({
-      user,
+      email,
       comment,
+      user, // Include the user field here
       commentedAt: new Date(),
     });
 

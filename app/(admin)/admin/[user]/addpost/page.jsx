@@ -164,15 +164,13 @@ const AddPost = () => {
       <div className="max-w-7xl mx-auto">
         <nav className="sticky top-0 backdrop-blur-lg rounded-lg p-4 mb-6 shadow-sm">
           {!postId ? (
-            <h1 className="text-2xl font-bold text-gray-800">
-              Create New Post
-            </h1>
+            <h1 className="text-2xl font-bold ">Create New Post</h1>
           ) : (
-            <h1 className="text-2xl font-bold text-gray-800">Edit Post</h1>
+            <h1 className="text-2xl font-bold ">Edit Post</h1>
           )}
         </nav>
 
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid  gap-6">
           {/* Form Section */}
           <div className="dark:bg-zinc-950 rounded-xl p-6 shadow-lg">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -222,7 +220,7 @@ const AddPost = () => {
               </div>
 
               {/* Author Input */}
-              <div>
+              {/* <div>
                 <label
                   htmlFor="author"
                   className="text-lg font-semibold text-gray-700"
@@ -241,7 +239,7 @@ const AddPost = () => {
                 {errors.author && (
                   <p className="text-red-500 text-sm mt-1">{errors.author}</p>
                 )}
-              </div>
+              </div> */}
 
               {/* Tags Selector */}
               <div>
@@ -286,8 +284,8 @@ const AddPost = () => {
                 )}
               </div>
 
-              {/* Image Link Input */}
-              <div>
+              {/* authir Image Link Input */}
+              {/* <div>
                 <label
                   htmlFor="image"
                   className="text-lg font-semibold text-gray-700"
@@ -303,7 +301,7 @@ const AddPost = () => {
                   placeholder="Image URL (optional)"
                   className={`w-full bg-transparent px-4 py-3 text-lg font-bold border rounded-lg`}
                 />
-              </div>
+              </div> */}
               <div>
                 <label
                   htmlFor="image"
@@ -317,7 +315,7 @@ const AddPost = () => {
                   name="image"
                   value={formData.image}
                   onChange={handleChange}
-                  placeholder="Image URL (optional)"
+                  placeholder="Thumbnail Image URL "
                   className={`w-full bg-transparent px-4 py-3 text-lg font-bold border rounded-lg`}
                 />
               </div>
@@ -326,7 +324,7 @@ const AddPost = () => {
               <div>
                 <label
                   htmlFor="status"
-                  className="text-lg font-semibold text-gray-700"
+                  className="text-lg  font-semibold text-gray-700"
                 >
                   Status
                 </label>
@@ -337,8 +335,12 @@ const AddPost = () => {
                   onChange={handleChange}
                   className="w-full bg-transparent px-4 py-3 text-lg font-bold border rounded-lg"
                 >
-                  <option value="draft">Draft</option>
-                  <option value="published">Published</option>
+                  <option className="bg-transparent" value="draft">
+                    Draft
+                  </option>
+                  <option className="bg-transparent" value="published">
+                    Published
+                  </option>
                 </select>
               </div>
 

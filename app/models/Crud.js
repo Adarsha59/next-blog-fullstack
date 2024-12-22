@@ -33,7 +33,7 @@ const BlogSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    trim: true, // URL or file path for a blog image
+    // trim: true, // URL or file path for a blog image
   },
   author_image: {
     type: String,
@@ -45,14 +45,14 @@ const BlogSchema = new mongoose.Schema({
   },
   comments: [
     {
-      user: {
+      email: {
         type: String,
-        required: true, // User who posted the comment
       },
       comment: {
         type: String,
         required: true, // Content of the comment
       },
+      user: { type: String, required: true },
       commentedAt: {
         type: Date,
         default: Date.now, // Timestamp for the comment
