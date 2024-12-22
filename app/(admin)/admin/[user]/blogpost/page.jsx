@@ -4,7 +4,9 @@ import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { format } from "date-fns";
+import { useUser } from "@clerk/nextjs";
 const BlogPostsTable = () => {
+  const { user } = useUser();
   const router = useRouter();
   useEffect(() => {
     const fetchPosts = async () => {
@@ -41,10 +43,10 @@ const BlogPostsTable = () => {
     },
   ]);
   const gopost = () => {
-    router.push("/admin/addpost");
+    router.push(`/admin/${user.firstName}/addpost`);
   };
   const goedit = (id) => {
-    router.push(`/admin/addpost?id=${id}`);
+    router.push(`/admin/${user.firstName}/addpost?id=${id}`);
   };
   const handleDelete = async (id) => {
     try {

@@ -4,8 +4,10 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import JoditEditor from "jodit-react";
+import { useUser } from "@clerk/nextjs";
 
 const AddPost = () => {
+  const { user } = useUser();
   const editor = useRef(null);
   const searchParams = useSearchParams();
   const postId = searchParams.get("id"); // Fetch postId from query params

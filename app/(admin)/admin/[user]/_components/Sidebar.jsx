@@ -12,9 +12,10 @@ import {
   FiMenu,
   FiX,
 } from "react-icons/fi";
-import { UserButton } from "@clerk/nextjs";
+import { SignOutButton, UserButton, useAuth, useUser } from "@clerk/nextjs";
 
 const AdminNavbar = () => {
+  const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("dashboard");
 
@@ -22,20 +23,23 @@ const AdminNavbar = () => {
     {
       id: "dashboard",
       label: "Dashboard",
-      path: "/admin/dashboard",
+      path: `/admin/${user.firstName}/dashboard`,
+
       icon: <FiHome className="w-5 h-5" />,
     },
     {
       id: "posts",
       label: "Posts",
-      path: "/admin/blogpost",
+      path: `/admin/${user.firstName}/blogpost`,
+
       icon: <FiFileText className="w-5 h-5" />,
     },
 
     {
       id: "comments",
       label: "Comments",
-      path: "/admin/comments",
+      path: `/admin/${user.firstName}/comments`,
+
       icon: <FiMessageSquare className="w-5 h-5" />,
     },
 

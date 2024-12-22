@@ -23,7 +23,7 @@ import { SignOutButton, useAuth, useUser } from "@clerk/nextjs";
 const BlogWebsite = () => {
   // const { user } = useUser();
   // console.log("username", user);
-  const { isSignedIn, user, isLoaded } = useUser();
+  const { user } = useUser();
 
   // console.log("First Name:", user.firstName);
   const router = useRouter();
