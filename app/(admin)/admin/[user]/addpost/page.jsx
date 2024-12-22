@@ -22,7 +22,7 @@ const AddPost = () => {
     author_image: user.imageUrl,
     tags: "",
     image: "",
-    status: "draft", // Default to "draft"
+    status: "published", // Default to "draft"
   });
 
   const [errors, setErrors] = useState({});
@@ -43,7 +43,7 @@ const AddPost = () => {
             author: post.author || "",
             tags: post.tags ? post.tags.join(", ") : "", // Convert tags array to string
             image: post.image || "",
-            status: post.status || "draft", // Default to draft if not provided
+            status: post.status || "published", // Default to draft if not provided
           });
         } catch (error) {
           console.error("Error fetching post:", error);
@@ -158,7 +158,7 @@ const AddPost = () => {
       content: "",
       tags: "",
       image: "",
-      status: "draft",
+      status: "published",
     });
     setErrors({});
   };
@@ -338,11 +338,11 @@ const AddPost = () => {
                   onChange={handleChange}
                   className="w-full bg-transparent px-4 py-3 text-lg font-bold border rounded-lg"
                 >
-                  <option className="bg-transparent" value="draft">
-                    Draft
-                  </option>
                   <option className="bg-transparent" value="published">
                     Published
+                  </option>
+                  <option className="bg-transparent" value="draft ">
+                    Draft
                   </option>
                 </select>
               </div>
