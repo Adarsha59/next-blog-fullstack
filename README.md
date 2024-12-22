@@ -101,7 +101,7 @@ The Admin Panel provides essential tools for managing blog content:
 
 # 🍿 Demo
 
-- Check out our live demo at https:: https://github.com/
+- Check out our live demo at https://hamroblog.vercel.app/
 
 - Source code https://github.com/Adarsha59/next-blog-fullstack.git
 
@@ -113,7 +113,7 @@ Adarsha Paudyal
 
 ## Contact Information
 
-- **Email:** adarsha.pau@gmail.com
+- **Email:** code.adarsha@gmail.com
 - **GitHub:** [github.com/Adarsha59/](https://github.com/Adarsha59/)
 
 # 😍 Contribution
