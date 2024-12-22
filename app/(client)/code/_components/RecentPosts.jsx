@@ -14,6 +14,14 @@ const RecentPosts = ({ posts }) => {
     console.log("time", Math.ceil(wordCount / wordsPerMinute)); // Split content into words
     return Math.ceil(wordCount / wordsPerMinute); // Rounding up to the nearest minute
   };
+
+  const truncateDescription = (description, wordLimit = 20) => {
+    const words = description.split(/\s+/); // Split by whitespace to get an array of words
+    if (words.length > wordLimit) {
+      return words.slice(0, wordLimit).join(" ") + "..."; // Return only the first 12 words with "..."
+    }
+    return description; // Return the whole description if it's shorter than 12 words
+  };
   const slugify = (text) => {
     return text
       .toLowerCase()
@@ -45,7 +53,8 @@ const RecentPosts = ({ posts }) => {
               <p className="text-sm text-gray-500 mb-2">By {post.author}</p>
 
               <p className="dark:text-white/70 text-black/70  mb-4">
-                {post.description}
+                {/* {post.description} */}
+                {truncateDescription(post.description)}
               </p>
               <div className="flex flex-wrap gap-2 mb-4">
                 {post.tags.map((tag, index) => (

@@ -35,6 +35,13 @@ const FeaturedPosts = ({ posts, title }) => {
     const slug = slugify(title);
     router.push(`/code/blog/${slug}/${id}`);
   };
+  const truncateDescription = (description, wordLimit = 12) => {
+    const words = description.split(/\s+/); // Split by whitespace to get an array of words
+    if (words.length > wordLimit) {
+      return words.slice(0, wordLimit).join(" ") + "...."; // Return only the first 12 words with "..."
+    }
+    return description; // Return the whole description if it's shorter than 12 words
+  };
 
   return (
     <section className="max-w-6xl mx-auto px-4 py-12">
@@ -63,7 +70,8 @@ const FeaturedPosts = ({ posts, title }) => {
                 <p className="text-sm text-gray-500 mb-2">By {post.author}</p>
 
                 <p className="dark:text-white/70 text-black/70 text-sm mb-4">
-                  {post.description}
+                  {/* {post.description} */}
+                  {truncateDescription(post.description)}
                 </p>
 
                 <div className="flex items-center text-sm dark:text-white/50 text-black/50">
