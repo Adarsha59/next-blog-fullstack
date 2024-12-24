@@ -60,7 +60,7 @@ const RecentPosts = ({ posts }) => {
                 {post.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm"
+                    className="px-3 py-1 rounded-full bg-blue-500/20 text-black-300 text-sm"
                   >
                     {tag}
                   </span>

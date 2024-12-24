@@ -37,8 +37,9 @@ const BlogHomepage = () => {
           return updatedAtB - updatedAtA; // descending order
         });
         const recent = sortedPostsByUpdatedAt.slice(0, 5);
+        const tag = sortedPostsByUpdatedAt.slice(0, 6);
 
-        setPosts(posts);
+        setPosts(tag);
         setTopLikedPosts(topLiked);
         setRecentPosts(recent);
 

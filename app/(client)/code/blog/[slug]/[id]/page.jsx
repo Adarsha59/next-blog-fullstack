@@ -116,6 +116,7 @@ const BlogPost = ({ params }) => {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white transition-all duration-300">
             {post.title}
           </h1>
+
           <div className="flex items-center space-x-4">
             <img
               src={post.author_image}
@@ -148,6 +149,10 @@ const BlogPost = ({ params }) => {
       </div>
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
+        <p className="dark:text-white/80 text-black/80 mb-6 text-xl leading-relaxed text-center max-w-3xl mx-auto px-4 py-4 border-l-4  shadow-lg rounded-lg">
+          {post.description}
+        </p>
+
         <LikeButton blogId={post._id} />
         <img
           src={post.image}
@@ -155,7 +160,7 @@ const BlogPost = ({ params }) => {
           className="w-full h-96 object-cover rounded-xl mb-8 transition-transform duration-300 hover:scale-[1.02]"
         />
         <article
-          className="prose lg:prose-xl max-w-none text-gray-900 dark:text-white"
+          className="prose lg:prose-xl max-w-none "
           dangerouslySetInnerHTML={{ __html: post.content }}
         ></article>
         {/* Comments Section */}
